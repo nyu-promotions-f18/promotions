@@ -13,7 +13,7 @@ Clone the project to your development folder and create your Vagrant vm
 
 ```sh
     git clone https://github.com/nyu-promotions-f18/promotions.git
-    cd lab-restful-flask
+    cd promotions
     vagrant up
 ```
 
