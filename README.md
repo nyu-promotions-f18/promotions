@@ -32,7 +32,7 @@ service which looks something like this:
 ```
 {
     name: "Promotions REST API Service",
-    url: "http://localhost:5000/health",
+    url: "http://localhost:5000/",
     version: "1.0"
 }
 ```
