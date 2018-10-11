@@ -41,6 +41,29 @@ def health():
                    url='http://localhost:5000/health'), HTTP_200_OK
 
 
+
+
+######################################################################
+# LIST ALL PROMOTIONS
+######################################################################
+@app.route('/promotions', methods=['GET'])
+def list_promotions():
+    """ Returns all of the Promotions """
+    promotions = []
+    category = request.args.get('category')
+    name = request.args.get('name')
+    if category:
+        promotions = Promotion.find_by_category(category)
+    elif name:
+        promotions = Promotion.find_by_goods_name(name)
+    else:
+        promotions = Promotion.all()
+
+    results = [promotion.serialize() for promotion in promotions]
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
+
+
 ######################################################################
 # RETRIEVE A PROMOTION
 ######################################################################
@@ -54,4 +77,4 @@ def get_promotion(promotion_id):
     promotion = Promotion.find(promotion_id)
     if not promotion:
         raise NotFound("Promotion with id '{}' was not found.".format(promotion_id))
-    return make_response(jsonify(pet.serialize()), status.HTTP_200_OK)
+    return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
