@@ -41,8 +41,8 @@ class Promotion(db.Model):
     promo_name = db.Column(db.String(63))
     goods_name = db.Column(db.String(63))
     category = db.Column(db.String(63))
-    price = db.Column(db.Integer)
-    discount= db.Column(db.Integer)
+    price = db.Column(db.Float())
+    discount= db.Column(db.Float())
     available = db.Column(db.Boolean())
 
     def __repr__(self):

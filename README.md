@@ -26,7 +26,7 @@ Once the VM is up you can use it with:
 ```
 
 You should now be able to see the service running in your browser by going to
-[http://localhost:5000](http://localhost:5000). You will see a message about the
+[http://localhost:5001](http://localhost:5001) or [http://192.168.33.10:5000](http://192.168.33.10:5000). You will see a message about the
 service which looks something like this:
 
 ```
