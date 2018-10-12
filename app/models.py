@@ -1,16 +1,3 @@
-# Copyright 2016, 2017 John Rofrano. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the 'License');
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an 'AS IS' BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 Models for Promotion Demo Service
 All of the models are stored in this module
@@ -25,18 +12,21 @@ category (string) - the category the promotion belongs to (i.e., home, kids)
 price (double) - the price of the goods
 dicount (double) - the discount percentage of tomorrow he promotion
 available (boolean) - True for goods that are available for purchase
-
 """
+import os
+import json
 import logging
-from flask_sqlalchemy import SQLAlchemy
+from . import db
 
-# Create the SQLAlchemy object to be initialized later in init_db()
-db = SQLAlchemy()
-
-class DataValidationError(Exception):
-    """ Used for an data validation errors when deserializing """
+######################################################################
+# Custom Exceptions
+######################################################################
+class DataValidationError(ValueError):
     pass
 
+######################################################################
+# Pet Model for database
+######################################################################
 class Promotion(db.Model):
     """
     Class that represents a Promotion
@@ -62,6 +52,7 @@ class Promotion(db.Model):
         """
         Saves a Promotion to the data store
         """
+        # if the id is None it hasn't been added to the database
         if not self.id:
             db.session.add(self)
         db.session.commit()
@@ -102,13 +93,9 @@ class Promotion(db.Model):
         return self
 
     @staticmethod
-    def init_db(app):
+    def init_db():
         """ Initializes the database session """
         Promotion.logger.info('Initializing database')
-        Promotion.app = app
-        # This is where we initialize SQLAlchemy from the Flask app
-        db.init_app(app)
-        app.app_context().push()
         db.create_all()  # make our sqlalchemy tables
 
     @staticmethod
@@ -137,15 +124,6 @@ class Promotion(db.Model):
         """
         Promotion.logger.info('Processing promotion query for %s ...', promo_name)
         return Promotion.query.filter(Promotion.promo_name == promo_name)
-    
-    @staticmethod
-    def find_by_goods_name(goods_name):
-        """ Returns all Goods with the given name
-        Args:
-            name (string): the name of the goods you want to match
-        """
-        Promotion.logger.info('Processing goods query for %s ...', goods_name)
-        return Promotion.query.filter(Promotion.goods_name == goods_name)
 
     @staticmethod
     def find_by_category(category):
@@ -155,7 +133,7 @@ class Promotion(db.Model):
         """
         Promotion.logger.info('Processing category query for %s ...', category)
         return Promotion.query.filter(Promotion.category == category)
-   
+
     @staticmethod
     def find_by_availability(available=True):
         """ Query that finds goods by their availability """

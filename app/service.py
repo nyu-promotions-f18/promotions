@@ -16,6 +16,7 @@ import sys
 from flask import Response, jsonify, request, json, url_for, make_response
 from flask_api import status
 from werkzeug.exceptions import BadRequest, NotFound, MethodNotAllowed, UnsupportedMediaType, InternalServerError # Exception Class
+
 from . import app
 from models import Promotion, DataValidationError
 
@@ -106,8 +107,6 @@ def list_promotions():
     results = [promotion.serialize() for promotion in promotions]
     return make_response(jsonify(results), status.HTTP_200_OK)
 
-
-
 ######################################################################
 # RETRIEVE A PROMOTION
 ######################################################################
@@ -122,3 +121,11 @@ def get_promotion(promotion_id):
     if not promotion:
         raise NotFound("Promotion with id '{}' was not found.".format(promotion_id))
     return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
+
+######################################################################
+#  U T I L I T Y   F U N C T I O N S
+######################################################################
+
+def init_db():
+    """ Initialies the SQLAlchemy app """
+    Promotion.init_db()
