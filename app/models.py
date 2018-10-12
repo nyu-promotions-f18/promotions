@@ -25,7 +25,7 @@ class DataValidationError(ValueError):
     pass
 
 ######################################################################
-# Pet Model for database
+# Promotion Model for database
 ######################################################################
 class Promotion(db.Model):
     """
