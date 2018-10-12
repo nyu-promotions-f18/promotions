@@ -14,6 +14,7 @@ DELETE /promotions/{id} - deletes a Pet record in the database
 import os
 import sys
 from flask import Response, jsonify, request, json, url_for, make_response
+from app.models import Promotion, DataValidationError
 from . import app
 
 # Status Codes
@@ -48,9 +49,6 @@ def health():
                    status='OK',
                    url='http://localhost:5000/health'), HTTP_200_OK
 
-
-
-
 ######################################################################
 # LIST ALL PROMOTIONS
 ######################################################################
@@ -70,8 +68,6 @@ def list_promotions():
     results = [promotion.serialize() for promotion in promotions]
     return make_response(jsonify(results), status.HTTP_200_OK)
 
-
-
 ######################################################################
 # RETRIEVE A PROMOTION
 ######################################################################
@@ -86,3 +82,11 @@ def get_promotion(promotion_id):
     if not promotion:
         raise NotFound("Promotion with id '{}' was not found.".format(promotion_id))
     return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
+
+######################################################################
+#  U T I L I T Y   F U N C T I O N S
+######################################################################
+
+def init_db():
+    """ Initialies the SQLAlchemy app """
+    Promotion.init_db()
