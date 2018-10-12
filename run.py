@@ -18,4 +18,6 @@ if __name__ == "__main__":
     print "****************************************"
     print " P R O M O T I O N S  S E R V I C E   R U N N I N G"
     print "****************************************"
+    # server.init_db()
+    service.init_db()
     app.run(host=HOST, port=int(PORT), debug=DEBUG)
