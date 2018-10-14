@@ -1,7 +1,7 @@
 """
 Package: app
 Package for the application models and services.
-Logging is enabled in this module to debug issues 
+This module also sets up the logging to be used with gunicorn
 """
 
 import logging
@@ -16,11 +16,16 @@ app.config.from_object('config')
 app.config['LOGGING_LEVEL'] = logging.INFO
 #print('Database URI {}'.format(app.config['SQLALCHEMY_DATABASE_URI']))
 
-# Set up the logging for production
-print 'Setting up logging for {}...'.format(__name__)
-app.logger.info('Logging established')
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
-from app import service, models
+# Set up the logging for production
+print 'Setting up logging for {}...'.format(__name__)
+if __name__ != '__main__':
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    if gunicorn_logger:
+        app.logger.handlers = gunicorn_logger.handlers
+        app.logger.setLevel(gunicorn_logger.level)
+
+app.logger.info('Logging established')
