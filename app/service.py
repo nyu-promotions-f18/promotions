@@ -13,6 +13,7 @@ DELETE /promotions/{id} - deletes a Pet record in the database
 
 import os
 import sys
+import logging
 from flask import Response, jsonify, request, json, url_for, make_response
 from flask_api import status
 from werkzeug.exceptions import BadRequest, NotFound, MethodNotAllowed, UnsupportedMediaType, InternalServerError # Exception Class
