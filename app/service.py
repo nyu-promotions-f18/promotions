@@ -16,7 +16,7 @@ import sys
 import logging
 from flask import Response, jsonify, request, json, url_for, make_response
 from flask_api import status
-from werkzeug.exceptions import BadRequest, NotFound, MethodNotAllowed, UnsupportedMediaType, InternalServerError # Exception Class
+from werkzeug.exceptions import BadRequest, NotFound, UnsupportedMediaType, InternalServerError # Exception Class
 
 from . import app
 from models import Promotion, DataValidationError
@@ -124,9 +124,34 @@ def get_promotion(promotion_id):
     return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
 
 ######################################################################
+# CREATE A PROMOTION
+######################################################################
+@app.route('/promotions', methods=['POST'])
+def create_promotion():
+    """
+    Create a new promotion
+    This endpoint will create a promotion based on the data in the request body and save it into the db
+    """
+    check_content_type('application/json')
+    promotion = Promotion()
+    promotion.deserialize(request.get_json())
+    promotion.save()
+    saved_info = promotion.serialize()
+    location_url = url_for('get_promotion', promotion_id = promotion.id, _external=True)
+    return make_response(jsonify(saved_info), status.HTTP_201_CREATED, { 'Location': location_url })
+
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 
 def init_db():
     """ Initialies the SQLAlchemy app """
     Promotion.init_db()
+
+def check_content_type(content_type):
+    """ Validate the content type of request """
+    if (request.headers['Content-Type'] == content_type):
+        return
+    app.logger.error('Invalid Content_Type: %s', request.headers['Content-Type'])
+    raise UnsupportedMediaType('Content-Type must be {}'.format(content_type))
