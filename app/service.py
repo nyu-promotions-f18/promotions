@@ -4,11 +4,12 @@ Promotion Service
 
 Paths:
 ------
-GET /promotions - Returns a list all of the Pets
-GET /promotions/{id} - Returns the Pet with a given id number
-POST /promotions - creates a new Pet record in the database
-PUT /promotions/{id} - updates a Pet record in the database
-DELETE /promotions/{id} - deletes a Pet record in the database
+GET /promotions - Returns a list all of the Promotions
+GET /promotions/{id} - Returns the Promotion with a given id number
+POST /promotions - creates a new Promotion in the database
+PUT /promotions/{id} - updates a Promotion in the database
+DELETE /promotions/{id} - deletes a Promotion record in the database
+DELETE /promotions/unavailable -deletes all promotions that are not available
 """
 
 import os
@@ -140,7 +141,34 @@ def create_promotion():
     location_url = url_for('get_promotion', promotion_id = promotion.id, _external=True)
     return make_response(jsonify(saved_info), status.HTTP_201_CREATED, { 'Location': location_url })
 
+######################################################################
+# DELETE A PROMOTION
+######################################################################
+@app.route('/promotions/<int:promotion_id>', methods=['DELETE'])
+def delete_promotion(promotion_id):
+    """
+    Delete a Promotion
+    This endpoint will delete a Promotion based the id specified in the path
+    """
+    promotion = Promotion.find(promotion_id)
+    if promotion:
+        promotion.delete()
+    return make_response('', status.HTTP_204_NO_CONTENT)
 
+######################################################################
+# DELETE All UNAVAILABLE PROMOTION
+######################################################################
+"""@app.route('/promotions/unavailable', methods=['DELETE'])
+def delete_unavailable_promotion():
+    """
+    Delete all unavailable Promotions
+    This endpoint will delete all unavailable Promotions
+    """
+    promotion = Promotion.find_by_availability(available=False)
+    if promotion:
+        promotion.delete()
+    return make_response('', status.HTTP_204_NO_CONTENT)
+"""
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################

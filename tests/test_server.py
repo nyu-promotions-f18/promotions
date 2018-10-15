@@ -129,7 +129,18 @@ class TestPromotionServer(unittest.TestCase):
     }
     resp = self.app.post('/promotions', data=new_promotion, content_type='application/x-www-form-urlencoded')
     self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
-    
+
+#  def test_delete_promotion(self):
+#     """ Delete a Promotion """
+#     promotion = Promotion.find_by_name('Buy one get one free')[0]
+#     # save the current number of pets for later comparrison
+#     pet_count = self.get_pet_count()
+#     resp = self.app.delete('/pets/{}'.format(pet.id),
+#                               content_type='application/json')
+#     self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+#     self.ass:rtEqual(len(resp.data), 0)
+#     new_count = self.get_pet_count()
+#     self.assertEqual(new_count, pet_count - 1)    
 
 ######################################################################
 # Utility functions
