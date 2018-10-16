@@ -38,17 +38,39 @@ class TestPromotionServer(unittest.TestCase):
     service.init_db()
     db.drop_all()
     db.create_all()
-    initial_data = {
+    initial_data_1 = {
       'promo_name': 'Buy one get one free',
       'goods_name': 'Apple',
       'category': 'Fruit',
       'price': '2.99',
       'discount': '0.5',
+      'available': False,
+    }
+    initial_data_2 = {
+      'promo_name': '20% off',
+      'goods_name': 'Carrot',
+      'category': 'Vegetable',
+      'price': '3.99',
+      'discount': '0.8',
+      'available': False,
+    }
+    initial_data_3 = {
+      'promo_name': '70% off',
+      'goods_name': 'IPhone XS',
+      'category': 'Digital Products',
+      'price': '1000.00',
+      'discount': '0.7',
       'available': True,
     }
-    promotion = Promotion()
-    promotion.deserialize(initial_data)
-    promotion.save()
+    # promotion1 = Promotion()
+    # promotion1.deserialize(initial_data_1)
+    # promotion1.save()
+    # promotion2 = Promotion()
+    # promotion2.deserialize(initial_data_2)
+    # promotion2.save()
+    self.save_promotion(initial_data_1)
+    self.save_promotion(initial_data_2)
+    self.save_promotion(initial_data_3)
     self.app = app.test_client()
 
   def tearDown(self):
@@ -79,7 +101,7 @@ class TestPromotionServer(unittest.TestCase):
     resp = self.app.get('/promotions')
     self.assertEqual(resp.status_code, status.HTTP_200_OK)
     data = json.loads(resp.data)
-    self.assertEqual(len(data), 1)
+    self.assertEqual(len(data), 3)
 
   def test_get_promotion(self):
     """ Test of getting a promotion with promotion id """
@@ -103,7 +125,7 @@ class TestPromotionServer(unittest.TestCase):
       'category': 'Vegetable',
       'price': '3.45',
       'discount': '0.8',
-      'available': True,
+      'available': False,
     }
     data = json.dumps(new_promotion)
     resp = self.app.post('/promotions', data=data, content_type='application/json')
@@ -133,25 +155,43 @@ class TestPromotionServer(unittest.TestCase):
 
   def test_delete_promotion(self):
      """ Delete a Promotion """
-     promotion = Promotion.find_by_name('Buy one get one free')[0]
+     promotion = Promotion.find_by_promo_name('Buy one get one free')[0]
      # save the current number of promotions for later comparison
      promotion_count = len(self.get_promotion())
      resp = self.app.delete('/promotions/{}'.format(promotion.id),
                                content_type='application/json')
      self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
-     self.ass:rtEqual(len(resp.data), 0)
+     self.assertEqual(len(resp.data), 0)
      new_count = len(self.get_promotion())
-     self.assertEqual(new_count, promotion_count - 1)    
+     self.assertEqual(new_count, promotion_count - 1)
+
+  def test_delete_unavailable_promotion(self):
+    """ Delete all unavailable promotions """
+    unavailable_promo_count = Promotion.find_by_availability(False).count()
+    # initial count of unavailable promotions, make sure it's not empty
+    self.assertNotEqual(unavailable_promo_count, 0)
+    resp = self.app.delete('/promotions/unavailable')
+    self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+    self.assertEqual(len(resp.data), 0)
+    new_unavailable_promo_count = Promotion.find_by_availability(False).count()
+    self.assertEqual(new_unavailable_promo_count, 0)   
+
 ######################################################################
 # Utility functions
 ######################################################################
 
   def get_promotion(self):
-      """ save the current number of promotions """
-      resp = self.app.get('/promotions')
-      self.assertEqual(resp.status_code, status.HTTP_200_OK)
-      data = json.loads(resp.data)
-      return data
+    """ get all current promotions """
+    resp = self.app.get('/promotions')
+    self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    data = json.loads(resp.data)
+    return data
+  
+  def save_promotion(self, data):
+    """ save a promotion into the db """
+    promotion = Promotion()
+    promotion.deserialize(data)
+    promotion.save()
 
 
 ######################################################################
