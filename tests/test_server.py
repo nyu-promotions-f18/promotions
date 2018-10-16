@@ -62,12 +62,6 @@ class TestPromotionServer(unittest.TestCase):
       'discount': '0.7',
       'available': True,
     }
-    # promotion1 = Promotion()
-    # promotion1.deserialize(initial_data_1)
-    # promotion1.save()
-    # promotion2 = Promotion()
-    # promotion2.deserialize(initial_data_2)
-    # promotion2.save()
     self.save_promotion(initial_data_1)
     self.save_promotion(initial_data_2)
     self.save_promotion(initial_data_3)
@@ -187,6 +181,42 @@ class TestPromotionServer(unittest.TestCase):
     self.assertEqual(len(resp.data), 0)
     new_unavailable_promo_count = Promotion.find_by_availability(False).count()
     self.assertEqual(new_unavailable_promo_count, 0)   
+  
+  def test_query_promotion_list_by_name(self):
+    """ Test of querying promotions by name """
+    resp = self.app.get('/promotions', query_string='name=20%+off')
+    self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    self.assertGreater(len(resp.data), 0)
+    self.assertIn('Carrot', resp.data)
+    self.assertNotIn('Apple', resp.data)
+    data = json.loads(resp.data)
+    query_item = data[0]
+    self.assertEqual(query_item['promo_name'], '20% off')
+  
+  def test_query_promotion_list_by_availability(self):
+    """ Test of querying promotions by availability """
+    resp = self.app.get('/promotions', query_string='availability=False')
+    self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    self.assertGreater(len(resp.data), 0)
+    self.assertIn('Carrot', resp.data)
+    self.assertNotIn('IPhone XS', resp.data)
+    data = json.loads(resp.data)
+    query_item_1 = data[0]
+    self.assertEqual(query_item_1['available'], False)
+    query_item_2 = data[1]
+    self.assertEqual(query_item_2['available'], False)
+  
+  def test_query_promotion_list_by_category(self):
+    """ Test of querying promotions by category """
+    resp = self.app.get('/promotions', query_string='category=Fruit')
+    self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    self.assertGreater(len(resp.data), 0)
+    self.assertIn('Apple', resp.data)
+    self.assertNotIn('IPhone XS', resp.data)
+    data = json.loads(resp.data)
+    query_item = data[0]
+    self.assertEqual(query_item['category'], 'Fruit')
+
 
 ######################################################################
 # Utility functions
