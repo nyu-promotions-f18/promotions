@@ -158,17 +158,18 @@ def delete_promotion(promotion_id):
 ######################################################################
 # DELETE All UNAVAILABLE PROMOTION
 ######################################################################
-"""@app.route('/promotions/unavailable', methods=['DELETE'])
+@app.route('/promotions/unavailable', methods=['DELETE'])
 def delete_unavailable_promotion():
-    """
-    Delete all unavailable Promotions
-    This endpoint will delete all unavailable Promotions
-    """
-    promotion = Promotion.find_by_availability(available=False)
-    if promotion:
-        promotion.delete()
+
+    """ Delete all unavailable Promotions """
+    """ This endpoint will delete all unavailable Promotions """
+
+    promotions = Promotion.find_by_availability(False)
+    if promotions:
+        for promotion in promotions:
+            promotion.delete()
     return make_response('', status.HTTP_204_NO_CONTENT)
-"""
+
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S

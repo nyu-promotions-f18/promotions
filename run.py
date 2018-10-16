@@ -15,10 +15,10 @@ PORT = os.getenv('PORT', '5000')
 #   M A I N
 ######################################################################
 if __name__ == "__main__":
-    print "****************************************"
-    print " P R O M O T I O N S  S E R V I C E   R U N N I N G"
-    print "****************************************"
+    print("****************************************")
+    print(" P R O M O T I O N S  S E R V I C E   R U N N I N G")
+    print("****************************************")
     # server.init_db()
-    service.initialize_logging()
+    # service.initialize_logging()
     service.init_db()
     app.run(host=HOST, port=int(PORT), debug=DEBUG)
