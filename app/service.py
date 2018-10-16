@@ -142,6 +142,24 @@ def create_promotion():
     return make_response(jsonify(saved_info), status.HTTP_201_CREATED, { 'Location': location_url })
 
 ######################################################################
+# UPDATE AN EXISTING PET
+######################################################################
+@app.route('/promotions/<int:promotion_id>', methods=['PUT'])
+def update_promotion(promotion_id):
+    """
+    Update a Promotion
+    This endpoint will update a Promotion based the body that is posted
+    """
+    check_content_type('application/json')
+    promotion = Promotion.find(promotion_id)
+    if not promotion:
+        raise NotFound("Promotion with id '{}' was not found.".format(promotion_id))
+    promotion.deserialize(request.get_json())
+    promotion.id = promotion_id
+    promotion.save()
+    return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
+
+######################################################################
 # DELETE A PROMOTION
 ######################################################################
 @app.route('/promotions/<int:promotion_id>', methods=['DELETE'])
