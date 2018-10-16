@@ -99,10 +99,13 @@ def list_promotions():
     promotions = []
     category = request.args.get('category')
     name = request.args.get('name')
+    availability = request.args.get('availability')
     if category:
         promotions = Promotion.find_by_category(category)
     elif name:
-        promotions = Promotion.find_by_goods_name(name)
+        promotions = Promotion.find_by_promo_name(name)
+    elif availability:
+        promotions = Promotion.find_by_availability(availability)
     else:
         promotions = Promotion.all()
 
