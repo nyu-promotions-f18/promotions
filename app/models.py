@@ -9,9 +9,9 @@ Attributes:
 promo_name (string) - the name of the promotion
 goods_name (string) - the name of the goods on promotion
 category (string) - the category the promotion belongs to (i.e., home, kids)
-price (double) - the price of the goods
-dicount (double) - the discount percentage of tomorrow he promotion
-available (boolean) - True for goods that are available for purchase
+price (float) - the price of the goods
+dicount (float) - the discount percentage of the promotion
+available (boolean) - True for promotions that are in use
 """
 import os
 import json
@@ -136,10 +136,10 @@ class Promotion(db.Model):
 
     @staticmethod
     def find_by_availability(available=True):
-        """ Query that finds goods by their availability """
-        """ Returns all goods by their availability
+        """ Query that finds promotions by their availability """
+        """ Returns all promotions by their availability
         Args:
-            available (boolean): True for goods that are available
+            available (boolean): True for promotion that are in use
         """
         Promotion.logger.info('Processing available query for %s ...', available)
         return Promotion.query.filter(Promotion.available == available)
