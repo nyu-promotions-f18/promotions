@@ -131,6 +131,17 @@ class TestPromotionServer(unittest.TestCase):
     self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
     
 
+  def test_delete_promotion(self):
+     """ Delete a Promotion """
+     promotion = Promotion.find_by_name('Buy one get one free')[0]
+     # save the current number of promotions for later comparison
+     promotion_count = len(self.get_promotion())
+     resp = self.app.delete('/promotions/{}'.format(promotion.id),
+                               content_type='application/json')
+     self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+     self.ass:rtEqual(len(resp.data), 0)
+     new_count = len(self.get_promotion())
+     self.assertEqual(new_count, promotion_count - 1)    
 ######################################################################
 # Utility functions
 ######################################################################
