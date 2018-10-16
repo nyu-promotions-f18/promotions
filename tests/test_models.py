@@ -88,7 +88,7 @@ class TestPromotions(unittest.TestCase):
         promotion.delete()
         self.assertEqual(len(Promotion.all()),0)
 
-    def test_serialize_a_pet(self):
+    def test_serialize_a_promotion(self):
         """ Test serialization of a Promotion """
         promotion = Promotion(promo_name="random", goods_name="random_good", category="random_category", price=20, discount=20, available=False)        
         data = promotion.serialize()
@@ -108,7 +108,7 @@ class TestPromotions(unittest.TestCase):
         self.assertIn('available', data)
         self.assertEqual(data['available'], False)
 
-    def test_deserialize_a_pet(self):
+    def test_deserialize_a_promotion(self):
         """ Test deserialization of a Promotion """
         data = {"id": 1, "promo_name": "random", "goods_name": "random_good", "category": "random_category", "price": 20, "discount": 20, "available": True}
         promotion = Promotion()
@@ -184,5 +184,5 @@ class TestPromotions(unittest.TestCase):
 ######################################################################
 if __name__ == '__main__':
     unittest.main()
-    # suite = unittest.TestLoader().loadTestsFromTestCase(TestPets)
+    # suite = unittest.TestLoader().loadTestsFromTestCase(TestPromotions)
     # unittest.TextTestRunner(verbosity=2).run(suite)
