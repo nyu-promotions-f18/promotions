@@ -183,7 +183,7 @@ class TestPromotionServer(unittest.TestCase):
     self.assertEqual(new_unavailable_promo_count, 0)   
   
   def test_query_promotion_list_by_name(self):
-    """ Query promotions by name """
+    """ Test of querying promotions by name """
     resp = self.app.get('/promotions', query_string='name=20%+off')
     self.assertEqual(resp.status_code, status.HTTP_200_OK)
     self.assertGreater(len(resp.data), 0)
@@ -192,6 +192,21 @@ class TestPromotionServer(unittest.TestCase):
     data = json.loads(resp.data)
     query_item = data[0]
     self.assertEqual(query_item['promo_name'], '20% off')
+  
+  def test_query_promotion_list_by_availability(self):
+    """ Test of querying promotions by availability """
+    resp = self.app.get('/promotions', query_string='availability=False')
+    self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    self.assertGreater(len(resp.data), 0)
+    self.assertIn('Carrot', resp.data)
+    self.assertNotIn('IPhone XS', resp.data)
+    data = json.loads(resp.data)
+    query_item_1 = data[0]
+    self.assertEqual(query_item_1['available'], False)
+    query_item_2 = data[1]
+    self.assertEqual(query_item_2['available'], False)
+  
+
 
 ######################################################################
 # Utility functions
