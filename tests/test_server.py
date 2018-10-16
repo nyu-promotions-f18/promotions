@@ -151,7 +151,19 @@ class TestPromotionServer(unittest.TestCase):
     }
     resp = self.app.post('/promotions', data=new_promotion, content_type='application/x-www-form-urlencoded')
     self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
-    
+  
+  def test_update_promotion(self):
+        """ Update an existing Promotion """
+        promotion = Promotion.find_by_promo_name('Buy one get one free')[0]
+        new_promo = dict(promo_name='Buy one get one free', goods_name='yogurt', category='Dairy', price=2.99,
+      discount=0.5, available=True)
+        data = json.dumps(new_promo)
+        resp = self.app.put('/promotions/{}'.format(promotion.id),
+                            data=data,
+                            content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        new_json = json.loads(resp.data)
+        self.assertEqual(new_json['category'], 'Dairy')
 
   def test_delete_promotion(self):
      """ Delete a Promotion """
