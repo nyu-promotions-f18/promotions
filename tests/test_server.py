@@ -206,6 +206,16 @@ class TestPromotionServer(unittest.TestCase):
     query_item_2 = data[1]
     self.assertEqual(query_item_2['available'], False)
   
+  def test_query_promotion_list_by_category(self):
+    """ Test of querying promotions by category """
+    resp = self.app.get('/promotions', query_string='category=Fruit')
+    self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    self.assertGreater(len(resp.data), 0)
+    self.assertIn('Apple', resp.data)
+    self.assertNotIn('IPhone XS', resp.data)
+    data = json.loads(resp.data)
+    query_item = data[0]
+    self.assertEqual(query_item['category'], 'Fruit')
 
 
 ######################################################################
