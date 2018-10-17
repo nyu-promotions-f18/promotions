@@ -95,7 +95,7 @@ def health():
 ######################################################################
 @app.route('/promotions', methods=['GET'])
 def list_promotions():
-    """ Returns all of the Promotions """
+    """ Returns all of the Promotions or Queries promotions based on argument"""
     promotions = []
     category = request.args.get('category')
     name = request.args.get('name')
