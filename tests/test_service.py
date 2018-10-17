@@ -29,7 +29,7 @@ class TestPromotionServer(unittest.TestCase):
     # Set up the test database
     if DATABASE_URI:
         app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
-    
+
   @classmethod
   def tearDownClass(cls):
     pass
@@ -104,12 +104,12 @@ class TestPromotionServer(unittest.TestCase):
     self.assertEqual(resp.status_code, status.HTTP_200_OK)
     data = json.loads(resp.data)
     self.assertEqual(data['promo_name'], promotion.promo_name)
-  
+
   def test_get_promotion_not_found(self):
     """ Test of getting a nonexistent promotion """
     resp = self.app.get('/promotions/0')
     self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-  
+
   def test_create_promotion(self):
     """ Test of creating a new promotion """
     promotion_count = len(self.get_promotion())
@@ -145,7 +145,7 @@ class TestPromotionServer(unittest.TestCase):
     }
     resp = self.app.post('/promotions', data=new_promotion, content_type='application/x-www-form-urlencoded')
     self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
-  
+
   def test_update_promotion(self):
         """ Update an existing Promotion """
         promotion = Promotion.find_by_promo_name('Buy one get one free')[0]
@@ -158,6 +158,17 @@ class TestPromotionServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['category'], 'Dairy')
+
+  def test_update_promotion_when_not_found(self):
+      """ Update an existing Promotion """
+      promotion = Promotion.find_by_promo_name('Buy one get one free')[0]
+      new_promo = dict(promo_name='Buy one get one free', goods_name='yogurt', category='Dairy', price=2.99,
+    discount=0.5, available=True)
+      data = json.dumps(new_promo)
+      resp = self.app.put('/promotions/{}'.format(promotion.id+10),
+                          data=data,
+                          content_type='application/json')
+      self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
   def test_delete_promotion(self):
      """ Delete a Promotion """
@@ -180,8 +191,8 @@ class TestPromotionServer(unittest.TestCase):
     self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
     self.assertEqual(len(resp.data), 0)
     new_unavailable_promo_count = Promotion.find_by_availability(False).count()
-    self.assertEqual(new_unavailable_promo_count, 0)   
-  
+    self.assertEqual(new_unavailable_promo_count, 0)
+
   def test_query_promotion_list_by_name(self):
     """ Test of querying promotions by name """
     resp = self.app.get('/promotions', query_string='name=20%+off')
@@ -192,7 +203,7 @@ class TestPromotionServer(unittest.TestCase):
     data = json.loads(resp.data)
     query_item = data[0]
     self.assertEqual(query_item['promo_name'], '20% off')
-  
+
   def test_query_promotion_list_by_availability(self):
     """ Test of querying promotions by availability """
     resp = self.app.get('/promotions', query_string='availability=False')
@@ -205,7 +216,7 @@ class TestPromotionServer(unittest.TestCase):
     self.assertEqual(query_item_1['available'], False)
     query_item_2 = data[1]
     self.assertEqual(query_item_2['available'], False)
-  
+
   def test_query_promotion_list_by_category(self):
     """ Test of querying promotions by category """
     resp = self.app.get('/promotions', query_string='category=Fruit')
@@ -222,6 +233,16 @@ class TestPromotionServer(unittest.TestCase):
       resp = self.app.put('/promotions')
       self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
+  def test_bad_request(self):
+    """ Test Bad Request """
+    new_promotion = {
+      'promo_name': '20% off',
+      'available': False,
+    }
+    data = json.dumps(new_promotion)
+    resp = self.app.post('/promotions', data=data, content_type='application/json')
+    self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
 ######################################################################
 # Utility functions
 ######################################################################
@@ -232,7 +253,7 @@ class TestPromotionServer(unittest.TestCase):
     self.assertEqual(resp.status_code, status.HTTP_200_OK)
     data = json.loads(resp.data)
     return data
-  
+
   def save_promotion(self, data):
     """ save a promotion into the db """
     promotion = Promotion()
