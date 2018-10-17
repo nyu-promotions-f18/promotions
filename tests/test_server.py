@@ -217,6 +217,10 @@ class TestPromotionServer(unittest.TestCase):
     query_item = data[0]
     self.assertEqual(query_item['category'], 'Fruit')
 
+  def test_method_not_allowed(self):
+      """ Test method not allowed """
+      resp = self.app.put('/promotions')
+      self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 ######################################################################
 # Utility functions
