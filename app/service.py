@@ -91,7 +91,7 @@ def health():
                    url=url_for('health', _external=True)),status.HTTP_200_OK
 
 ######################################################################
-# LIST ALL PROMOTIONS
+# LIST ALL PROMOTIONS OR QUERY BASED ON ARGUMENT
 ######################################################################
 @app.route('/promotions', methods=['GET'])
 def list_promotions():
