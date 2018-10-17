@@ -10,6 +10,7 @@ import unittest
 import os
 import json
 from flask_api import status
+from flask import Flask
 from app import app, db
 from app.models import Promotion, DataValidationError
 import app.service as service
@@ -160,7 +161,7 @@ class TestPromotionServer(unittest.TestCase):
         self.assertEqual(new_json['category'], 'Dairy')
 
   def test_update_promotion_when_not_found(self):
-      """ Update an existing Promotion """
+      """ Try Updating a non existing Promotion """
       promotion = Promotion.find_by_promo_name('Buy one get one free')[0]
       new_promo = dict(promo_name='Buy one get one free', goods_name='yogurt', category='Dairy', price=2.99,
     discount=0.5, available=True)
@@ -242,6 +243,18 @@ class TestPromotionServer(unittest.TestCase):
     data = json.dumps(new_promotion)
     resp = self.app.post('/promotions', data=data, content_type='application/json')
     self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+  def test_initialize_logging(self):
+    """ Test the Logging Service """
+    self.app = Flask(__name__)
+    self.app.debug = False
+    handler_list = list(self.app.logger.handlers)
+    for log_handler in handler_list:
+        self.app.logger.removeHandler(log_handler)
+    service.initialize_logging()
+    self.assertTrue(len(self.app.logger.handlers) == 1)
+    service.initialize_logging()
+    self.assertTrue(len(self.app.logger.handlers) == 1)
 
 ######################################################################
 # Utility functions
