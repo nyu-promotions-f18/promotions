@@ -1,4 +1,5 @@
 ## NYU DevOps-Promotions Fall 2018
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/62c79a7fc6fc40a298c8a46ef535a1a5)](https://app.codacy.com/app/yashgoyalMIT/promotions?utm_source=github.com&utm_medium=referral&utm_content=nyu-promotions-f18/promotions&utm_campaign=Badge_Grade_Settings)
 [![codecov](https://codecov.io/gh/nyu-promotions-f18/promotions/branch/master/graph/badge.svg)](https://codecov.io/gh/nyu-promotions-f18/promotions)
 
 This repository consists of the source code for a RESTFUL promotions service using Python Flask.
