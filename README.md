@@ -6,7 +6,6 @@ This repository consists of the source code for a RESTFUL promotions service usi
 ## What's featured in the project?
     * app/service.py -- the main service built using Python Flask
     * app/models.py -- the database models
-    * app/vcap_services.py -- Cloud Foundry VCAP_SERVICES support
     * tests/test_service.py -- test cases using Unit test
     * tests/test_models.py -- test cases using just the Promotions model
 
