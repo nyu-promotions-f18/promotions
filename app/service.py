@@ -83,7 +83,7 @@ def index():
 ######################################################################
 # GET HEALTH
 ######################################################################
-@app.route('/health')
+@app.route('/health', methods=['GET'])
 def health():
     """ Return service health """
     return jsonify(name='Promotions REST API Service - Health',
@@ -145,7 +145,7 @@ def create_promotion():
     return make_response(jsonify(saved_info), status.HTTP_201_CREATED, { 'Location': location_url })
 
 ######################################################################
-# UPDATE AN EXISTING PET
+# UPDATE AN EXISTING PROMOTION
 ######################################################################
 @app.route('/promotions/<int:promotion_id>', methods=['PUT'])
 def update_promotion(promotion_id):
