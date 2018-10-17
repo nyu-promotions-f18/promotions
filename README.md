@@ -1,5 +1,24 @@
 ## NYU DevOps-Promotions Fall 2018
+[![codecov](https://codecov.io/gh/nyu-promotions-f18/promotions/branch/master/graph/badge.svg)](https://codecov.io/gh/nyu-promotions-f18/promotions)
+
 This repository consists of the source code for a RESTFUL promotions service using Python Flask.
+
+## What's featured in the project?
+    * app/service.py -- the main service built using Python Flask
+    * app/models.py -- the database models
+    * app/vcap_services.py -- Cloud Foundry VCAP_SERVICES support
+    * tests/test_service.py -- test cases using Unit test
+    * tests/test_models.py -- test cases using just the Promotions model
+
+## Endpoints of the Service
+    * / - Renders the index page, methods=['GET']
+    * /health - Returns the health status of the service as a json, methods=['GET']
+    * /promotions - Returns a list of all the Promotions, methods=['GET']
+    * /promotions/<int:promotion_id> - Returns a single Promotion based on it's id, methods=['GET']
+    * /promotions - Creates a new promotion based on the data in the request body and saves it into the db, methods=['POST']
+    * /promotions/<int:promotion_id> - Updates a Promotion based the body that is posted, methods=['PUT']
+    * /promotions/<int:promotion_id> - Deletes a Promotion based the id specified in the path, methods=['DELETE']
+    * /promotions/unavailable - Deletes all unavailable Promotions, methods=['DELETE']
 
 ## Prerequisite Installation using Vagrant
 
