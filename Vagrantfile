@@ -10,6 +10,8 @@ Vagrant.configure(2) do |config|
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ubuntu/xenial64"
   # set up network ip and port forwarding
+  # Forward Flask and Kubernetes ports
+  config.vm.network "forwarded_port", guest: 8001, host: 8001, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 5000, host: 5000, host_ip: "127.0.0.1"
   config.vm.network "private_network", ip: "192.168.33.10"
 
@@ -35,6 +37,14 @@ Vagrant.configure(2) do |config|
   if File.exists?(File.expand_path("~/.ssh/id_rsa"))
     config.vm.provision "file", source: "~/.ssh/id_rsa", destination: "~/.ssh/id_rsa"
   end
+  if File.exists?(File.expand_path("~/.ssh/id_rsa.pub"))
+    config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/id_rsa.pub"
+  end
+
+  # Copy your IBM Clouid API Key if you have one
+  if File.exists?(File.expand_path("~/.bluemix/apiKey.json"))
+    config.vm.provision "file", source: "~/.bluemix/apiKey.json", destination: "~/.bluemix/apiKey.json"
+  end
 
   # Copy your .vimrc file so that your VI editor looks right
   if File.exists?(File.expand_path("~/.vimrc"))
@@ -44,6 +54,9 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
+  ######################################################################
+  # Setup a Python development environment
+  ######################################################################
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
     apt-get install -y git python-pip python-dev build-essential
@@ -80,6 +93,30 @@ Vagrant.configure(2) do |config|
     cd /vagrant
     python manage.py development
     cd
+  SHELL
+
+  ######################################################################
+  # Setup a Bluemix and Kubernetes environment
+  ######################################################################
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "\n************************************"
+    echo " Installing IBM Cloud CLI..."
+    echo "************************************\n"
+    # Install IBM Cloud CLI as Vagrant user
+    sudo -H -u vagrant sh -c 'curl -sL http://ibm.biz/idt-installer | bash'
+    sudo -H -u vagrant sh -c 'ibmcloud config --usage-stats-collect false'
+    sudo -H -u vagrant sh -c "echo 'source <(kubectl completion bash)' >> ~/.bashrc"
+    sudo -H -u vagrant sh -c "echo alias ic=/usr/local/bin/ibmcloud >> ~/.bash_aliases"
+    echo "\n"
+    echo "If you have an IBM Cloud API key in ~/.bluemix/apiKey.json"
+    echo "You can login with the following command:"
+    echo "\n"
+    echo "ibmcloud login -a https://api.ng.bluemix.net --apikey @~/.bluemix/apiKey.json"
+    echo "\n"
+    echo "\n************************************"
+    echo " For the Kubernetes Dashboard use:"
+    echo " kubectl proxy --address='0.0.0.0'"
+    echo "************************************\n"
   SHELL
 
 end
