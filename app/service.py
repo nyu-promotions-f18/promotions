@@ -1,6 +1,6 @@
 
 """
-Promotion Service
+Promotion Service with Swagger
 
 Paths:
 ------
@@ -17,22 +17,67 @@ import sys
 import logging
 from flask import Response, jsonify, request, json, url_for, make_response
 from flask_api import status
-from werkzeug.exceptions import BadRequest, NotFound, UnsupportedMediaType, InternalServerError # Exception Class
+from flask_restplus import Api, Resource, fields
+from werkzeug.exceptions import BadRequest, NotFound,\
+                        UnsupportedMediaType, InternalServerError # Exception Class
 
 from . import app
-from models import Promotion, DataValidationError
+from models import Promotion, DataValidationError  #, DatabaseConnectionError
 
 # Pull options from environment
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 PORT = os.getenv('PORT', '5000')
 
 ######################################################################
+# Configure Swagger before initilaizing it
+######################################################################
+api = Api(app,
+          version='1.0.0',
+          title='Promotions REST API Service',
+          description='This is a Promotions REST API.',
+          doc='/apidocs/'
+          # prefix='/api'
+         )
+
+# This namespace is the start of the path i.e., /pets
+ns = api.namespace('promotions', description='Promotion operations')
+
+# Define the model so that the docs reflect what can be sent
+promotion_model = api.model('Promotion', {
+    'id': fields.Integer(readOnly=True,
+                         description='The unique id assigned internally by service'),
+    'promo_name': fields.String(required=True,
+                          description='The name of the promotion'),
+    'goods_name': fields.String(required=True,
+                          description='The name of the goods on promotion'),
+    'category': fields.String(required=True,
+                              description='The category that the promotion belongs to'),
+    'price': fields.Float(required=True,
+                          description='Actual price of the goods on promotion'),
+    'discount': fields.Float(required=True,
+                          description='Price to be d'),
+    'available': fields.Boolean(required=True,
+                                description='Is the Promotion avaialble now?')
+})
+
+######################################################################
 # Error Handlers
 ######################################################################
-@app.errorhandler(DataValidationError)
+@api.errorhandler(DataValidationError)
 def request_validation_error(error):
     """ Handles Value Errors from bad data """
-    return bad_request(error)
+    message = error.message or str(error)
+    app.logger.info(message)
+    return {'status':400, 'error': 'Bad Request', 'message': message}, 400
+    #return bad_request(error)
+
+
+#@api.errorhandler(DatabaseConnectionError)
+#def database_connection_error(error):
+#    """ Handles Database Errors from connection attempts """
+#    message = error.message or str(error)
+#    app.logger.critical(message)
+#    return {'status':500, 'error': 'Server Error', 'message': message}, 500
 
 @app.errorhandler(400)
 def bad_request(error):
@@ -90,106 +135,172 @@ def health():
                    status='OK',
                    url=url_for('health', _external=True)),status.HTTP_200_OK
 
-######################################################################
-# LIST ALL PROMOTIONS OR QUERY BASED ON ARGUMENT
-######################################################################
-@app.route('/promotions', methods=['GET'])
-def list_promotions():
-    """ Returns all of the Promotions or Queries promotions based on argument"""
-    promotions = []
-    category = request.args.get('category')
-    name = request.args.get('name')
-    availability = request.args.get('availability')
-    if category:
-        promotions = Promotion.find_by_category(category)
-    elif name:
-        promotions = Promotion.find_by_promo_name(name)
-    elif availability:
-        promotions = Promotion.find_by_availability(availability)
-    else:
-        promotions = Promotion.all()
-
-    results = [promotion.serialize() for promotion in promotions]
-    return make_response(jsonify(results), status.HTTP_200_OK)
 
 ######################################################################
-# RETRIEVE A PROMOTION
+#  PATH: /promotions/{id}
 ######################################################################
-@app.route('/promotions/<int:promotion_id>', methods=['GET'])
-def get_promotion(promotion_id):
+@ns.route('/<int:promotion_id>')
+@ns.param('promotion_id', 'The Promotion identifier')
+class PromotionResource(Resource):
     """
-    Retrieve a single Promotion
-
-    This endpoint will return a Promotion based on it's id
+    PromotionResource class
+    Allows the manipulation of a single Promotion
+    GET /promotion{id} - Returns a Promotion with the id
+    PUT /promotion{id} - Update a Promotion with the id
+    DELETE /promotion{id} -  Deletes a Promotion with the id
     """
-    promotion = Promotion.find(promotion_id)
-    if not promotion:
-        raise NotFound("Promotion with id '{}' was not found.".format(promotion_id))
-    return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
 
-######################################################################
-# CREATE A PROMOTION
-######################################################################
-@app.route('/promotions', methods=['POST'])
-def create_promotion():
-    """
-    Create a new promotion
-    This endpoint will create a promotion based on the data in the request body and save it into the db
-    """
-    check_content_type('application/json')
-    promotion = Promotion()
-    promotion.deserialize(request.get_json())
-    promotion.save()
-    saved_info = promotion.serialize()
-    location_url = url_for('get_promotion', promotion_id = promotion.id, _external=True)
-    return make_response(jsonify(saved_info), status.HTTP_201_CREATED, { 'Location': location_url })
+    ######################################################################
+    # RETRIEVE A PROMOTION
+    ######################################################################
+    @ns.doc('get_promotion with a given id')
+    @ns.response(404, 'Promotion not found')
+    @ns.marshal_with(promotion_model)
+    def get(self,promotion_id):
+        """
+        Retrieve a single Promotion
 
-######################################################################
-# UPDATE AN EXISTING PROMOTION
-######################################################################
-@app.route('/promotions/<int:promotion_id>', methods=['PUT'])
-def update_promotion(promotion_id):
-    """
-    Update a Promotion
-    This endpoint will update a Promotion based the body that is posted
-    """
-    check_content_type('application/json')
-    promotion = Promotion.find(promotion_id)
-    if not promotion:
-        raise NotFound("Promotion with id '{}' was not found.".format(promotion_id))
-    promotion.deserialize(request.get_json())
-    promotion.id = promotion_id
-    promotion.save()
-    return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
+        This endpoint will return a Promotion based on it's id
+        """
+        app.logger.info("Request to Retrieve a promotion with id [%s]", promotion_id)
+        promotion = Promotion.find(promotion_id)
+        if not promotion:
+            raise NotFound("Promotion with id '{}' was not found.".format(promotion_id))
+        return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
 
-######################################################################
-# DELETE A PROMOTION
-######################################################################
-@app.route('/promotions/<int:promotion_id>', methods=['DELETE'])
-def delete_promotion(promotion_id):
-    """
-    Delete a Promotion
-    This endpoint will delete a Promotion based the id specified in the path
-    """
-    promotion = Promotion.find(promotion_id)
-    if promotion:
-        promotion.delete()
-    return make_response('', status.HTTP_204_NO_CONTENT)
 
-######################################################################
-# DELETE All UNAVAILABLE PROMOTION
-######################################################################
-@app.route('/promotions/unavailable', methods=['DELETE'])
-def delete_unavailable_promotion():
+    ######################################################################
+    # UPDATE AN EXISTING PROMOTION
+    ######################################################################
+    @ns.doc('update_promotions')
+    @ns.response(404, 'Promotion not found')
+    @ns.response(400, 'The posted Promotion data was not valid')
+    @ns.expect(promotion_model)
+    @ns.marshal_with(promotion_model)
+    def put(self,promotion_id):
+        """
+        Update a Promotion
+        This endpoint will update a Promotion based the body that is posted
+        """
+        app.logger.info('Request to Update a promotion with id [%s]', pet_id)
+        check_content_type('application/json')
+        promotion = Promotion.find(promotion_id)
+        if not promotion:
+            raise NotFound("Promotion with id '{}' was not found.".format(promotion_id))
 
-    """ Delete all unavailable Promotions """
-    """ This endpoint will delete all unavailable Promotions """
+        data = api.payload
+        app.logger.info(data)
+        promotion.deserialize(data)
+        promotion.id = promotion_id
+        promotion.save()
+        return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
 
-    promotions = Promotion.find_by_availability(False)
-    if promotions:
-        for promotion in promotions:
+
+
+
+    ######################################################################
+    # DELETE A PROMOTION
+    ######################################################################
+    @ns.doc('delete_promotion')
+    @ns.response(204, 'Promotion deleted')
+    def delete(self,promotion_id):
+        """
+        Delete a Promotion
+        This endpoint will delete a Promotion based the id specified in the path
+        """
+        app.logger.info('Request to Delete a promotion with id [%s]', pet_id)
+        promotion = Promotion.find(promotion_id)
+        if promotion:
             promotion.delete()
-    return make_response('', status.HTTP_204_NO_CONTENT)
+        return make_response('', status.HTTP_204_NO_CONTENT)
+
+
+
+######################################################################
+#  PATH: /promotions
+######################################################################
+@ns.route('/', strict_slashes=False)
+class PromotionCollection(Resource):
+    """ Handles all interactions with collections of Promotion"""
+
+    ######################################################################
+    # LIST ALL PROMOTIONS
+    ######################################################################
+    @ns.doc('list_promotions')
+    @ns.response(404, 'Promotion not found')
+    @ns.marshal_with(promotion_model)
+    def get(self):
+        """ Returns all of the Promotions"""
+        app.logger.info("Request to list all promotions")
+        promotions = []
+        category = request.args.get('category')
+        name = request.args.get('name')
+        availability = request.args.get('availability')
+        if category:
+            promotions = Promotion.find_by_category(category)
+        elif name:
+            promotions = Promotion.find_by_promo_name(name)
+        elif availability:
+            promotions = Promotion.find_by_availability(availability)
+        else:
+            promotions = Promotion.all()
+
+        results = [promotion.serialize() for promotion in promotions]
+        return make_response(jsonify(results), status.HTTP_200_OK)
+
+
+    ######################################################################
+    # CREATE A PROMOTION
+    ######################################################################
+    @ns.doc('create_promotions')
+    @ns.expect(promotion_model)
+    @ns.response(400, 'The posted data was not valid')
+    @ns.response(201, 'Promotion created successfully')
+    @ns.marshal_with(promotion_model, code=201)
+    def post(self):
+        """
+        Create a new promotion
+        This endpoint will create a promotion based on the data in the request body and save it into the db
+        """
+        app.logger.info('Request to Create a Promotion')
+        check_content_type('application/json')
+        promotion = Promotion()
+        app.logger.info('Payload = %s', api.payload)
+        promotion.deserialize(api.payload)
+        promotion.save()
+        app.logger.info('Promotion with new id [%s] saved!', promotion.id)
+        location_url = api.url_for(PromotionResource, promotion_id=promotion.id, _external=True)
+        saved_info = promotion.serialize()
+        location_url = url_for('get_promotion', promotion_id = promotion.id, _external=True)
+        return make_response(jsonify(saved_info), status.HTTP_201_CREATED, { 'Location': location_url })
+
+
+
+######################################################################
+#  PATH: /promotions/unavailable
+######################################################################
+@ns.route('/unavailable')
+class UnavailableResource(Resource):
+    """ Make a promotion unavailable """
+
+    #######################################################
+    # DELETE UNAVILABLE PROMOTIONS
+    #######################################################
+    @ns.doc('promotions_unavailable')
+    @ns.response(404, 'Promotion not found')
+    @ns.response(204, 'Unavailabe promotions deleted')
+    def delete(self):
+        """ Delete all unavailable Promotions
+
+        This endpoint will delete all unavailable Promotions
+        """
+        promotions = Promotion.find_by_availability(False)
+        if promotions:
+            for promotion in promotions:
+                promotion.delete()
+            return make_response('', status.HTTP_204_NO_CONTENT)
+
+
 
 
 ######################################################################
