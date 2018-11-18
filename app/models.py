@@ -24,8 +24,8 @@ from . import db
 class DataValidationError(ValueError):
     pass
 
-class DatabaseConnectionError(ConnectionError):
-    pass
+#class DatabaseConnectionError(ConnectionError):
+#   pass
 
 ######################################################################
 # Promotion Model for database
