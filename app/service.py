@@ -19,11 +19,10 @@ from flask import Response, jsonify, request, json, url_for, make_response
 from flask_api import status
 from flask_restplus import Api, Resource, fields
 from werkzeug.exceptions import BadRequest, NotFound,\
-                        UnsupportedMediaType, InternalServerError, \
-                         DatabaseConnectionError # Exception Class
+                        UnsupportedMediaType, InternalServerError # Exception Class
 
 from . import app
-from models import Promotion, DataValidationError
+from models import Promotion, DataValidationError  #, DatabaseConnectionError
 
 # Pull options from environment
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
@@ -73,12 +72,12 @@ def request_validation_error(error):
     #return bad_request(error)
 
 
-@api.errorhandler(DatabaseConnectionError)
-def database_connection_error(error):
-    """ Handles Database Errors from connection attempts """
-    message = error.message or str(error)
-    app.logger.critical(message)
-    return {'status':500, 'error': 'Server Error', 'message': message}, 500
+#@api.errorhandler(DatabaseConnectionError)
+#def database_connection_error(error):
+#    """ Handles Database Errors from connection attempts """
+#    message = error.message or str(error)
+#    app.logger.critical(message)
+#    return {'status':500, 'error': 'Server Error', 'message': message}, 500
 
 @app.errorhandler(400)
 def bad_request(error):
