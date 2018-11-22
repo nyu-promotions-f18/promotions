@@ -16,6 +16,7 @@ available (boolean) - True for promotions that are in use
 import os
 import json
 import logging
+import ibm_db
 from . import db
 
 ######################################################################

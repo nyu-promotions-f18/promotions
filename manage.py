@@ -21,7 +21,6 @@ import os
 import sys
 import re
 import pymysql
-import ibm-db
 from app import app, db
 
 # DATABASE_URI = 'mysql+pymysql://root:passw0rd@localhost:3306/development'
