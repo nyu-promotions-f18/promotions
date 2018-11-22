@@ -7,6 +7,7 @@ This module also sets up the logging to be used with gunicorn
 import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import ibm_db_sa
 
 # Create Flask application
 app = Flask(__name__)

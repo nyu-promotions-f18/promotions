@@ -4,6 +4,8 @@ Flask-API==1.0
 flask-restplus==0.10.1
 Flask-SQLAlchemy==2.3.2
 SQLAlchemy==1.2.12
+ibm-db==2.0.9
+ibm-db-sa==0.3.2
 PyMySQL==0.7.11
 honcho==1.0.1
 
