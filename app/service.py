@@ -302,6 +302,16 @@ class UnavailableResource(Resource):
 
 
 
+######################################################################
+# DELETE ALL PROMOTIONS DATA (for testing only)
+######################################################################
+@app.route('/promotions/reset', methods=['DELETE'])
+def promotions_reset():
+    """ Removes all promotions from the database """
+    Promotion.remove_all()
+    return make_response('', status.HTTP_204_NO_CONTENT)
+
+
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
