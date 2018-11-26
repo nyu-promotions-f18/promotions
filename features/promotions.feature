@@ -21,3 +21,34 @@ Scenario: Read a promotion
     And I press the "Search" button
     Then I should see "BlackFriday" in the results
     And I should not see "Christmas" in the results
+
+##################################
+############ Create ##############
+##################################
+
+Scenario: Create a Promotion
+    When I visit the "Home Page"
+    And I set the "id" to "1"
+    And I set the "promo_name" to "New Promotion"
+    And I set the "goods_name" to "Toy"
+    And I set the "category" to "Kids"
+    And I set the "price" to "100"
+    And I set the "discount" to "20"
+    And I set the "availablility" to "100"
+    When I press the "Create" button
+    Then I should see the message "Success"
+    And I should not see "404 Not Found"
+    And I should see "New Promotion" in the results
+
+##################################
+############  List  ##############
+##################################
+
+Scenario: List all the Promotion
+    When I visit the "Home Page"
+    And I press the "List All Promotions" button
+    Then I should see the message "Success"
+    And I should see "BlackFriday" in the results
+    And I should see "BlackFriday" in the results
+    And I should see "Christmas" in the results
+
