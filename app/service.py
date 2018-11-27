@@ -43,7 +43,7 @@ api = Api(app,
           version='1.0.0',
           title='Promotions REST API Service',
           description='This is a Promotions REST API.',
-          doc='/apidocs/'
+          doc='/apidocs/index.html'
           # prefix='/api'
          )
 
@@ -180,7 +180,7 @@ class PromotionResource(Resource):
         Update a Promotion
         This endpoint will update a Promotion based the body that is posted
         """
-        app.logger.info('Request to Update a promotion with id [%s]', pet_id)
+        app.logger.info('Request to Update a promotion with id [%s]', promotion_id)
         check_content_type('application/json')
         promotion = Promotion.find(promotion_id)
         if not promotion:
