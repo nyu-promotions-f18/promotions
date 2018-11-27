@@ -34,7 +34,7 @@ Scenario: Create a Promotion
     And I set the "category" to "Kids"
     And I set the "price" to "100"
     And I set the "discount" to "20"
-    And I set the "availablility" to "100"
+    And I set the "availablility" to "True"
     When I press the "Create" button
     Then I should see the message "Success"
     And I should not see "404 Not Found"
