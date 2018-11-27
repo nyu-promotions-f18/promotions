@@ -40,7 +40,7 @@ $(function () {
         var available = $("#promo_available").val() == "true";
 
         var data = {
-            "name": name,
+            "promo_name": name,
             "category": category,
             "available": available
         };
@@ -75,7 +75,7 @@ $(function () {
         var available = $("#promo_available").val() == "true";
 
         var data = {
-            "name": name,
+            "promo_name": name,
             "category": category,
             "available": available
         };
@@ -209,7 +209,7 @@ $(function () {
             $("#search_results").append(header);
             for(var i = 0; i < res.length; i++) {
                 promotion = res[i];
-                var row = "<tr><td>"+promotion.id+"</td><td>"+promotion.name+"</td><td>"+promotion.category+"</td><td>"+promotion.available+"</td></tr>";
+                var row = "<tr><td>"+promotion.id+"</td><td>"+promotion.promo_name+"</td><td>"+promotion.category+"</td><td>"+promotion.available+"</td></tr>";
                 $("#search_results").append(row);
             }
 

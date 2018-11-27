@@ -43,7 +43,7 @@ api = Api(app,
           version='1.0.0',
           title='Promotions REST API Service',
           description='This is a Promotions REST API.',
-          doc='/apidocs/'
+          doc='/apidocs/index.html'
           # prefix='/api'
          )
 
