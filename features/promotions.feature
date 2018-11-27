@@ -8,7 +8,7 @@ Background:
         | id | promo_name  | goods_name | category | price| discount  | available |
         |  1 | BlackFriday | LEGO       | Kids     | 100  | 20      |   True      |
         |  2 | CyberMonday | Dress      | Females  | 300  | 100     |   True      |
-        |  3 | Christmas   | Dishes       | Kitchen  | 50   | 5       |   True      |
+        |  3 | Christmas   | Dishes       | Kitchen  | 50   | 5       |   False      |
 
 Scenario: The server is running
     When I visit the "Home Page"
@@ -50,4 +50,34 @@ Scenario: List all the Promotion
     And I should see "BlackFriday" in the results
     And I should see "CyberMonday" in the results
     And I should see "Christmas" in the results
+
+#################################
+############  Query #############
+#################################
+
+Scenario: search promotions with name Christmas
+    When I visit the "Home Page"
+    And I set the "name" to "Christmas"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Christmas" in the results
+    And I should not see "BlackFriday" in the results
+    And I should not see "CyberMonday" in the results
+
+Scenario: search promotions in category Females
+    When I visit the "Home Page"
+    And I set the "category" to "Females"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Females" in the results
+    And I should not see "Kids" in the results
+    And I should not see "Kitchen" in the results
+
+Scenario: search available promotions
+    When I visit the "Home Page"
+    And I select the "available" to "True"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "true" in the results
+    And I should not see "false" in the results
 
