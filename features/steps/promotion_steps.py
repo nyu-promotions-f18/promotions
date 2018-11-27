@@ -7,9 +7,10 @@ import json
 import requests
 from behave import *
 from compare import expect, ensure
+from selenium.webdriver.support.ui import Select
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions
+# from selenium.webdriver.support import expected_conditions as EC
 
 
 # WAIT_SECONDS = 30
@@ -25,12 +26,13 @@ def step_impl(context):
     create_url = context.base_url + '/promotions'
     for row in context.table:
         data = {
-            "name": row['name'],
+            "promo_name": row['promo_name'],
+            "goods_name": row['goods_name'],
             "category": row['category'],
-	    "price": row['price'],
-	    "discount": row['discount'],
+	        "price": row['price'],
+	        "discount": row['discount'],
             "available": row['available'] in ['True', 'true', '1']
-            }
+        }
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)
         expect(context.resp.status_code).to_equal(201)
@@ -54,12 +56,16 @@ def step_impl(context, message):
 
 @when('I set the "{element_name}" to "{text_string}"')
 def step_impl(context, element_name, text_string):
-    element_id = 'promotion_' + element_name.lower()
+    element_id = 'promo_' + element_name.lower()
     element = context.driver.find_element_by_id(element_id)
     element.clear()
     element.send_keys(text_string)
 
-
+@when('I select the "{element_name}" to "{choice}"')
+def step_impl(context, element_name, choice):
+    element_id = 'promo_' + element_name.lower()
+    select = Select(context.driver.find_element_by_id(element_id))
+    select.select_by_visible_text(choice)
 
 ##################################################################
 # This code works because of the following naming convention:
@@ -87,3 +93,7 @@ def step_impl(context, name):
     ensure(name in element.text, False, error_msg)
 
 
+@then('I should see the message "{message}"')
+def step_impl(context, message):
+    element = context.driver.find_element_by_id('flash_message')
+    expect(element.text).to_contain(message)

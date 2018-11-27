@@ -8,9 +8,9 @@ $(function () {
     function update_form_data(res) {
         $("#promo_id").val(res.id);
         $("#promo_name").val(res.promo_name);
-        $("#goods_name").val(res.goods_name);
-        $("#orig_price").val(res.orig_price);
-        $("#discount").val(res.discount);
+        $("#promo_goods_name").val(res.goods_name);
+        $("#promo_price").val(res.orig_price);
+        $("#promo_discount").val(res.discount);
         $("#promo_category").val(res.category);
         if (res.available == true) {
             $("#promo_available").val("true");
@@ -22,9 +22,9 @@ $(function () {
     /// Clears all form fields
     function clear_form_data() {
         $("#promo_name").val("");
-        $("#goods_name").val("");
-        $("#orig_price").val("");
-        $("#discount").val("");
+        $("#promo_goods_name").val("");
+        $("#promo_price").val("");
+        $("#promo_discount").val("");
         $("#promo_category").val("");
         $("#promo_available").val("");
     }
@@ -42,9 +42,9 @@ $(function () {
     $("#create-btn").click(function () {
 
         var promo_name = $("#promo_name").val();
-        var goods_name = $("#goods_name").val();
-        var orig_price = $("#orig_price").val();
-        var discount = $("#discount").val();
+        var goods_name = $("#promo_goods_name").val();
+        var orig_price = $("#promo_price").val();
+        var discount = $("#promo_discount").val();
         var category = $("#promo_category").val();
         var available = $("#promo_available").val() == "true";
 
@@ -83,16 +83,16 @@ $(function () {
 
         var promo_id = $("#promo_id").val();
         var promo_name = $("#promo_name").val();
-        var goods_name = $("#goods_name").val();
-        var orig_price = $("#orig_price").val();
-        var discount = $("#discount").val();
+        var goods_name = $("#promo_goods_name").val();
+        var orig_price = $("#promo_price").val();
+        var discount = $("#promo_discount").val();
         var category = $("#promo_category").val();
         var available = $("#promo_available").val() == "true";
 
         var data = {
             "promo_name": promo_name,
             "goods_name": goods_name,
-            "price": orig_price
+            "price": orig_price,
             "discount": discount,
             "category": category,
             "available": available
