@@ -29,6 +29,14 @@ DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 PORT = os.getenv('PORT', '5000')
 
 ######################################################################
+# Get Index
+######################################################################
+@app.route('/', methods=['GET'])
+def index():
+    """ Return the home page """
+    return app.send_static_file('index.html')
+
+######################################################################
 # Configure Swagger before initilaizing it
 ######################################################################
 api = Api(app,
@@ -113,17 +121,7 @@ def internal_server_error(error):
     message = error.message or str(error)
     app.logger.info(message)
     return jsonify(status=500, error='Internal Server Error', message=message), status.HTTP_500_INTERNAL_SERVER_ERROR
-
-######################################################################
-# GET INDEX
-######################################################################
-@app.route('/')
-def index():
-    """ Return something useful by default """
-    return jsonify(name='Promotions REST API Service',
-                   version='1.0',
-                   resource=url_for('list_promotions', _external=True),
-                   status=url_for('health', _external=True)), status.HTTP_200_OK
+    
 
 ######################################################################
 # GET HEALTH
