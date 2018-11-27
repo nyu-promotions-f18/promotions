@@ -1,6 +1,6 @@
 import os
 import logging
-from app.vcap_services import get_database_uri
+from vcap_services import get_database_uri
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 

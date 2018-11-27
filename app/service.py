@@ -87,33 +87,27 @@ def request_validation_error(error):
 #    app.logger.critical(message)
 #    return {'status':500, 'error': 'Server Error', 'message': message}, 500
 
-@app.errorhandler(400)
-def bad_request(error):
-    """ Handles bad requests with 400_BAD_REQUEST """
-    message = error.message or str(error)
-    app.logger.info(message)
-    return jsonify(status=400, error='Bad Request', message=message),status.HTTP_400_BAD_REQUEST
+# @app.errorhandler(404)
+# def not_found(error):
+#     """ Handles resources not found with 404_NOT_FOUND """
+#     message = error.message or str(error)
+#     app.logger.info(message)
+#     print("dfssdf")
+#     return jsonify(status=404, error='Not Found', message=message), status.HTTP_404_NOT_FOUND
 
-@app.errorhandler(404)
-def not_found(error):
-    """ Handles resources not found with 404_NOT_FOUND """
-    message = error.message or str(error)
-    app.logger.info(message)
-    return jsonify(status=404, error='Not Found', message=message), status.HTTP_404_NOT_FOUND
+# @app.errorhandler(405)
+# def method_not_supported(error):
+#     """ Handles unsuppoted HTTP methods with 405_METHOD_NOT_SUPPORTED """
+#     message = error.message or str(error)
+#     app.logger.info(message)
+#     return jsonify(status=405, error='Method not Allowed', message=message), status.HTTP_405_METHOD_NOT_ALLOWED
 
-@app.errorhandler(405)
-def method_not_supported(error):
-    """ Handles unsuppoted HTTP methods with 405_METHOD_NOT_SUPPORTED """
-    message = error.message or str(error)
-    app.logger.info(message)
-    return jsonify(status=405, error='Method not Allowed', message=message), status.HTTP_405_METHOD_NOT_ALLOWED
-
-@app.errorhandler(415)
-def mediatype_not_supported(error):
-    """ Handles unsuppoted media requests with 415_UNSUPPORTED_MEDIA_TYPE """
-    message = error.message or str(error)
-    app.logger.info(message)
-    return jsonify(status=415, error='Unsupported media type', message=message), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
+# @app.errorhandler(415)
+# def mediatype_not_supported(error):
+#     """ Handles unsuppoted media requests with 415_UNSUPPORTED_MEDIA_TYPE """
+#     message = error.message or str(error)
+#     app.logger.info(message)
+#     return jsonify(status=415, error='Unsupported media type', message=message), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
 
 @app.errorhandler(500)
 def internal_server_error(error):
@@ -163,8 +157,9 @@ class PromotionResource(Resource):
         app.logger.info("Request to Retrieve a promotion with id [%s]", promotion_id)
         promotion = Promotion.find(promotion_id)
         if not promotion:
+            app.logger.error('Promotion with id %d was not found.', promotion_id)
             raise NotFound("Promotion with id '{}' was not found.".format(promotion_id))
-        return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
+        return promotion.serialize(), status.HTTP_200_OK
 
 
     ######################################################################
@@ -180,10 +175,11 @@ class PromotionResource(Resource):
         Update a Promotion
         This endpoint will update a Promotion based the body that is posted
         """
-        app.logger.info('Request to Update a promotion with id [%s]', pet_id)
+        app.logger.info('Request to Update a promotion with id [%s]', promotion_id)
         check_content_type('application/json')
         promotion = Promotion.find(promotion_id)
         if not promotion:
+            app.logger.error('Promotion with id %d was not found.', promotion_id)
             raise NotFound("Promotion with id '{}' was not found.".format(promotion_id))
 
         data = api.payload
@@ -191,7 +187,7 @@ class PromotionResource(Resource):
         promotion.deserialize(data)
         promotion.id = promotion_id
         promotion.save()
-        return make_response(jsonify(promotion.serialize()), status.HTTP_200_OK)
+        return promotion.serialize(), status.HTTP_200_OK
 
 
 
@@ -206,11 +202,11 @@ class PromotionResource(Resource):
         Delete a Promotion
         This endpoint will delete a Promotion based the id specified in the path
         """
-        app.logger.info('Request to Delete a promotion with id [%s]', pet_id)
+        app.logger.info('Request to Delete a promotion with id [%s]', promotion_id)
         promotion = Promotion.find(promotion_id)
         if promotion:
             promotion.delete()
-        return make_response('', status.HTTP_204_NO_CONTENT)
+        return '', status.HTTP_204_NO_CONTENT
 
 
 
@@ -225,11 +221,13 @@ class PromotionCollection(Resource):
     # LIST ALL PROMOTIONS
     ######################################################################
     @ns.doc('list_promotions')
-    @ns.response(404, 'Promotion not found')
+    @ns.param('category', 'List Promotions by category')
+    @ns.param('promo_name', 'List Promotions by name')
+    @ns.param('available', 'List Promotions by availability')
     @ns.marshal_with(promotion_model)
     def get(self):
         """ Returns all of the Promotions"""
-        app.logger.info("Request to list all promotions")
+        app.logger.info("Request to list promotions")
         promotions = []
         category = request.args.get('category')
         name = request.args.get('name')
@@ -239,12 +237,13 @@ class PromotionCollection(Resource):
         elif name:
             promotions = Promotion.find_by_promo_name(name)
         elif availability:
+            availability = str_to_bool(availability)
             promotions = Promotion.find_by_availability(availability)
         else:
             promotions = Promotion.all()
 
         results = [promotion.serialize() for promotion in promotions]
-        return make_response(jsonify(results), status.HTTP_200_OK)
+        return results, status.HTTP_200_OK
 
 
     ######################################################################
@@ -268,9 +267,7 @@ class PromotionCollection(Resource):
         promotion.save()
         app.logger.info('Promotion with new id [%s] saved!', promotion.id)
         location_url = api.url_for(PromotionResource, promotion_id=promotion.id, _external=True)
-        saved_info = promotion.serialize()
-        location_url = url_for('get_promotion', promotion_id = promotion.id, _external=True)
-        return make_response(jsonify(saved_info), status.HTTP_201_CREATED, { 'Location': location_url })
+        return promotion.serialize(), status.HTTP_201_CREATED, { 'Location': location_url }
 
 
 
@@ -285,7 +282,6 @@ class UnavailableResource(Resource):
     # DELETE UNAVILABLE PROMOTIONS
     #######################################################
     @ns.doc('promotions_unavailable')
-    @ns.response(404, 'Promotion not found')
     @ns.response(204, 'Unavailabe promotions deleted')
     def delete(self):
         """ Delete all unavailable Promotions
@@ -296,7 +292,7 @@ class UnavailableResource(Resource):
         if promotions:
             for promotion in promotions:
                 promotion.delete()
-            return make_response('', status.HTTP_204_NO_CONTENT)
+        return '', status.HTTP_204_NO_CONTENT
 
 
 
@@ -307,7 +303,7 @@ class UnavailableResource(Resource):
 def promotions_reset():
     """ Removes all promotions from the database """
     Promotion.remove_all()
-    return make_response('', status.HTTP_204_NO_CONTENT)
+    return '', status.HTTP_204_NO_CONTENT
 
 
 
@@ -326,6 +322,11 @@ def check_content_type(content_type):
     app.logger.error('Invalid Content_Type: %s', request.headers['Content-Type'])
     raise UnsupportedMediaType('Content-Type must be {}'.format(content_type))
 
+def str_to_bool(str):
+    if str.lower() == 'true':
+        return True
+    return False
+
 def initialize_logging(log_level=logging.INFO):
     """ Initialized the default logging to STDOUT """
     if not app.debug:
@@ -337,7 +338,7 @@ def initialize_logging(log_level=logging.INFO):
         # Make a new log handler that uses STDOUT
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(logging.Formatter(fmt))
-        handler.setLevel(log_level)
+        handler.setLevel(log_level) 
         # Remove the Flask default handlers and use our own
         handler_list = list(app.logger.handlers)
         for log_handler in handler_list:
