@@ -9,7 +9,7 @@ $(function () {
         $("#promo_id").val(res.id);
         $("#promo_name").val(res.promo_name);
         $("#promo_goods_name").val(res.goods_name);
-        $("#promo_price").val(res.orig_price);
+        $("#promo_price").val(res.price);
         $("#promo_discount").val(res.discount);
         $("#promo_category").val(res.category);
         if (res.available == true) {
@@ -161,7 +161,7 @@ $(function () {
 
         ajax.done(function(res){
             clear_form_data()
-            flash_message("Promotion with ID [" + res.id + "] has been Deleted!")
+            flash_message("Promotion with ID [" + promo_id + "] has been Deleted!")
         });
 
         ajax.fail(function(res){
@@ -202,9 +202,9 @@ $(function () {
         }
         if (available) {
             if (queryString.length > 0) {
-                queryString += '&available=' + available
+                queryString += '&availability=' + available
             } else {
-                queryString += 'available=' + available
+                queryString += 'availability=' + available
             }
         }
 
