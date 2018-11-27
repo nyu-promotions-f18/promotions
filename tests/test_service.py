@@ -76,11 +76,7 @@ class TestPromotionServer(unittest.TestCase):
     """ Test the Home Page """
     resp = self.app.get('/')
     self.assertEqual(resp.status_code, status.HTTP_200_OK)
-    data = json.loads(resp.data)
-    self.assertEqual(data['name'], 'Promotions REST API Service')
-    self.assertEqual(data['version'], '1.0')
-    self.assertEqual(data['resource'].split('/')[3], 'promotions')
-    self.assertEqual(data['status'].split('/')[3], 'health')
+    self.assertIn('Promotion REST API Service', resp.data)
 
   def test_health(self):
     """ Test the server health checker """
@@ -228,6 +224,16 @@ class TestPromotionServer(unittest.TestCase):
     data = json.loads(resp.data)
     query_item = data[0]
     self.assertEqual(query_item['category'], 'Fruit')
+  
+  def test_reset_promotion_data(self):
+    """ Test of deleting all promotions """
+    initial_count = len(self.get_promotion())
+    self.assertNotEqual(initial_count, 0)
+    resp = self.app.delete('/promotions/reset')
+    self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+    self.assertEqual(len(resp.data), 0)
+    new_count = len(self.get_promotion())
+    self.assertEqual(new_count, 0)
 
   def test_method_not_allowed(self):
       """ Test method not allowed """

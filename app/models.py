@@ -107,6 +107,13 @@ class Promotion(db.Model):
         """ Returns all of the Promotion goods in the database """
         Promotion.logger.info('Processing all Promotion goods')
         return Promotion.query.all()
+    
+    @staticmethod
+    def remove_all():
+        """ Delete all promotions in the database """
+        Promotion.logger.info('Deleting all promotions')
+        Promotion.query.delete()
+        db.session.commit()
 
     @staticmethod
     def find(promotion_id):
