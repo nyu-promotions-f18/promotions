@@ -39,7 +39,7 @@ class Promotion(db.Model):
     """
     logger = logging.getLogger(__name__)
     app = None
-
+    __tablename__ = 'promotion'
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
     promo_name = db.Column(db.String(63))
@@ -112,8 +112,7 @@ class Promotion(db.Model):
     def remove_all():
         """ Delete all promotions in the database """
         Promotion.logger.info('Deleting all promotions')
-        Promotion.query.delete()
-        db.session.commit()
+        db.session.execute("TRUNCATE TABLE promotion")
 
     @staticmethod
     def find(promotion_id):
