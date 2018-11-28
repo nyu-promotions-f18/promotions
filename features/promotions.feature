@@ -55,7 +55,7 @@ Scenario: List all the Promotion
 ############  Query #############
 #################################
 
-Scenario: search promotions with name Christmas
+Scenario: Search promotions with name Christmas
     When I visit the "Home Page"
     And I set the "name" to "Christmas"
     And I press the "Search" button
@@ -64,7 +64,7 @@ Scenario: search promotions with name Christmas
     And I should not see "BlackFriday" in the results
     And I should not see "CyberMonday" in the results
 
-Scenario: search promotions in category Females
+Scenario: Search promotions in category Females
     When I visit the "Home Page"
     And I set the "category" to "Females"
     And I press the "Search" button
@@ -73,7 +73,7 @@ Scenario: search promotions in category Females
     And I should not see "Kids" in the results
     And I should not see "Kitchen" in the results
 
-Scenario: search available promotions
+Scenario: Search available promotions
     When I visit the "Home Page"
     And I select the "available" to "True"
     And I press the "Search" button
@@ -89,34 +89,49 @@ Scenario: Update a Promotion
     When I visit the "Home Page"
     And I set the "id" to "1"
     And I press the "Retrieve" button
-    Then I should see "BlackFriday" in the "promo_name" field
-    When I change "Name" to "NewYear"
+    Then I should see "BlackFriday" in the "name" field
+    And I should see "LEGO" in the "goods_name" field
+    And I should see "Kids" in the "category" field
+    And I should see "True" in the "available" field
+    When I change "name" to "NewYear"
     And I change "goods_name" to "candle"
     And I change "category" to "Home"
+    And I reselect "available" to "False"
     And I press the "Update" button
     Then I should see the message "Success"
-    When I set the "Id" to "1"
+    When I set the "id" to "1"
     And I press the "Retrieve" button
-    Then I should see "NewYear" in the "Name" field
+    Then I should see "NewYear" in the "name" field
     And I should see "candle" in the "goods_name" field
     And I should see "Home" in the "category" field
+    And I should see "False" in the "available" field
 
-Scenario: Update promotion with invalid id
-    When I visit the "Home Page"
-    And I set the "id" to "30"
-    And I press the "Retrieve" button
-    Then I should get a response code "404"
-    When I visit "Home Page"
-    Then I will not see a promotion with "id" as "30"
+# Scenario: Update promotion with invalid id
+#     When I visit the "Home Page"
+#     And I set the "id" to "30"
+#     And I press the "Retrieve" button
+#     Then I should get a response code "404"
+#     When I visit "Home Page"
+#     Then I will not see a promotion with "id" as "30"
 
-Scenario: Update a promotion's availablilty
+#################################
+############ Delete #############
+#################################
+
+Scenario: Delete a Promotion
     When I visit the "Home Page"
-    And I set the "id" to "3"
+    And I set the "id" to "1"
     And I press the "Retrieve" button
-    When I retrieve "promotions" with "id" as "3"
-    And I change "available" to "True"
-    And I press the "Retrieve" button
-    When I visit the "Home Page"
-    And I select the "available" to "True"
-    And I press the "Search" button
-    Then I should see "Christmass" in the results with "id" as "3"
+    Then I should see "BlackFriday" in the "name" field
+    And I should see "LEGO" in the "goods_name" field
+    And I should see "Kids" in the "category" field
+    And I should see "True" in the "available" field
+    When I press the "Delete" button
+    Then I should see the message "Promotion with ID [1] has been Deleted!"
+    When I press the "Retrieve" button
+    Then I should see the message "Promotion with id '1' was not found."
+
+
+
+
+
