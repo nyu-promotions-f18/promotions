@@ -97,3 +97,29 @@ def step_impl(context, name):
 def step_impl(context, message):
     element = context.driver.find_element_by_id('flash_message')
     expect(element.text).to_contain(message)
+
+##################################################################
+# This code works because of the following naming convention:
+# The id field for text input in the html is the element name
+# prefixed by 'promo_' so the Name field has an id='promo_name'
+# We can then lowercase the name and prefix with promo_ to get the id
+##################################################################
+
+@then('I should see "{text_string}" in the "{element_name}" field')
+def step_impl(context, text_string, element_name):
+    element_id = 'promo_' + element_name.lower()
+    element = context.driver.find_element_by_id(element_id)
+    expect(element.get_attribute('value')).to_equal(text_string)
+
+@when('I change "{element_name}" to "{text_string}"')
+def step_impl(context, element_name, text_string):
+    element_id = 'promo_' + element_name.lower()
+    element = context.driver.find_element_by_id(element_id)
+    element.clear()
+    element.send_keys(text_string)
+
+@when('I reselect "{element_name}" to "{choice}"')
+def step_impl(context, element_name, choice):
+    element_id = 'promo_' + element_name.lower()
+    select = Select(context.driver.find_element_by_id(element_id))
+    select.select_by_visible_text(choice)

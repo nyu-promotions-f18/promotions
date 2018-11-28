@@ -13,9 +13,9 @@ $(function () {
         $("#promo_discount").val(res.discount);
         $("#promo_category").val(res.category);
         if (res.available == true) {
-            $("#promo_available").val("true");
+            $("#promo_available").val("True");
         } else {
-            $("#promo_available").val("false");
+            $("#promo_available").val("False");
         }
     }
 
@@ -186,7 +186,7 @@ $(function () {
 
         var name = $("#promo_name").val();
         var category = $("#promo_category").val();
-        var available = $("#promo_available").val() == "true";
+        var available = $("#promo_available").val() == "True";
 
         var queryString = ""
 
