@@ -230,7 +230,7 @@ class PromotionCollection(Resource):
         app.logger.info("Request to list promotions")
         promotions = []
         category = request.args.get('category')
-        name = request.args.get('name')
+        name = request.args.get('promo_name')
         availability = request.args.get('availability')
         if category:
             promotions = Promotion.find_by_category(category)

@@ -200,7 +200,7 @@ $(function () {
                 queryString += 'category=' + category
             }
         }
-        if (available) {
+        if (available != undefined) {
             if (queryString.length > 0) {
                 queryString += '&availability=' + available
             } else {
