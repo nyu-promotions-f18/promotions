@@ -22,7 +22,7 @@ from werkzeug.exceptions import BadRequest, NotFound,\
                         UnsupportedMediaType, InternalServerError # Exception Class
 
 from . import app
-from models import Promotion, DataValidationError  #, DatabaseConnectionError
+from models import Promotion, DataValidationError
 
 # Pull options from environment
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
@@ -77,37 +77,35 @@ def request_validation_error(error):
     message = error.message or str(error)
     app.logger.info(message)
     return {'status':400, 'error': 'Bad Request', 'message': message}, 400
-    #return bad_request(error)
 
+@app.errorhandler(503)
+def database_connection_error(error):
+   """ Handles Database Errors from connection attempts """
+   message = error.message or str(error)
+   app.logger.critical(message)
+   return {'status':503, 'error': 'Service Unavailable', 'message': message}, 503
 
-#@api.errorhandler(DatabaseConnectionError)
-#def database_connection_error(error):
-#    """ Handles Database Errors from connection attempts """
-#    message = error.message or str(error)
-#    app.logger.critical(message)
-#    return {'status':500, 'error': 'Server Error', 'message': message}, 500
+@app.errorhandler(404)
+def not_found(error):
+    """ Handles resources not found with 404_NOT_FOUND """
+    message = error.message or str(error)
+    app.logger.info(message)
+    print("dfssdf")
+    return jsonify(status=404, error='Not Found', message=message), status.HTTP_404_NOT_FOUND
 
-# @app.errorhandler(404)
-# def not_found(error):
-#     """ Handles resources not found with 404_NOT_FOUND """
-#     message = error.message or str(error)
-#     app.logger.info(message)
-#     print("dfssdf")
-#     return jsonify(status=404, error='Not Found', message=message), status.HTTP_404_NOT_FOUND
+@app.errorhandler(405)
+def method_not_supported(error):
+    """ Handles unsuppoted HTTP methods with 405_METHOD_NOT_SUPPORTED """
+    message = error.message or str(error)
+    app.logger.info(message)
+    return jsonify(status=405, error='Method not Allowed', message=message), status.HTTP_405_METHOD_NOT_ALLOWED
 
-# @app.errorhandler(405)
-# def method_not_supported(error):
-#     """ Handles unsuppoted HTTP methods with 405_METHOD_NOT_SUPPORTED """
-#     message = error.message or str(error)
-#     app.logger.info(message)
-#     return jsonify(status=405, error='Method not Allowed', message=message), status.HTTP_405_METHOD_NOT_ALLOWED
-
-# @app.errorhandler(415)
-# def mediatype_not_supported(error):
-#     """ Handles unsuppoted media requests with 415_UNSUPPORTED_MEDIA_TYPE """
-#     message = error.message or str(error)
-#     app.logger.info(message)
-#     return jsonify(status=415, error='Unsupported media type', message=message), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
+@app.errorhandler(415)
+def mediatype_not_supported(error):
+    """ Handles unsuppoted media requests with 415_UNSUPPORTED_MEDIA_TYPE """
+    message = error.message or str(error)
+    app.logger.info(message)
+    return jsonify(status=415, error='Unsupported media type', message=message), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
 
 @app.errorhandler(500)
 def internal_server_error(error):
@@ -115,7 +113,7 @@ def internal_server_error(error):
     message = error.message or str(error)
     app.logger.info(message)
     return jsonify(status=500, error='Internal Server Error', message=message), status.HTTP_500_INTERNAL_SERVER_ERROR
-    
+
 
 ######################################################################
 # GET HEALTH
@@ -338,7 +336,7 @@ def initialize_logging(log_level=logging.INFO):
         # Make a new log handler that uses STDOUT
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(logging.Formatter(fmt))
-        handler.setLevel(log_level) 
+        handler.setLevel(log_level)
         # Remove the Flask default handlers and use our own
         handler_list = list(app.logger.handlers)
         for log_handler in handler_list:
