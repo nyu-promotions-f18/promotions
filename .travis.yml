@@ -4,7 +4,10 @@ python:
 
 env:
     global:
-        - DATABASE_URI = 'mysql+pymysql://root:@localhost:3306/test'
+        - DB_NAME=test
+        - DB_USER=root
+        - DB_PASS=
+        - DB_ADDR=127.0.0.1
 
 # command to install dependencies
 install: "pip install -r requirements.txt"
