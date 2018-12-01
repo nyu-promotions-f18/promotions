@@ -11,5 +11,8 @@ script:
 after_success:
   - codecov
 
-addons:
-  mariadb: '10.0'
+services:
+  - mysql
+
+before_script:
+  - mysql -e 'create database development;'
