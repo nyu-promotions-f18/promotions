@@ -4,9 +4,7 @@ python:
 
 env:
     global:
-        - username = 'root'
-        - password = ''
-        - port = '3306'
+        - DATABASE_URI = 'mysql+pymysql://root:@localhost:3306/test'
 
 # command to install dependencies
 install: "pip install -r requirements.txt"
@@ -21,4 +19,4 @@ services:
   - mysql
 
 before_script:
-  - mysql -e 'create database development;'
+  - mysql -e 'create database test;'

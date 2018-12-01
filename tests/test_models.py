@@ -74,7 +74,7 @@ class TestPromotions(unittest.TestCase):
         promotion.category = "random_afterchange"
         promotion.save()
         self.assertEqual(promotion.id,1)
-        #Fetch it back to make sure the id not changed, but only the data           
+        #Fetch it back to make sure the id not changed, but only the data
         promotions = Promotion.all()
         self.assertEqual(len(promotions),1)
         self.assertEqual(promotions[0].category,"random_afterchange")
@@ -87,7 +87,7 @@ class TestPromotions(unittest.TestCase):
         #delete the promotion
         promotion.delete()
         self.assertEqual(len(Promotion.all()),0)
-    
+
     def test_delete_all_promotions(self):
         """ Delete all promotions in the database """
         promotion1 = Promotion(promo_name="random1", goods_name="random_good1", category="random_category1", price=20, discount=20, available=True)
@@ -98,10 +98,9 @@ class TestPromotions(unittest.TestCase):
         Promotion.remove_all()
         self.assertEqual(len(Promotion.all()), 0)
 
-
     def test_serialize_a_promotion(self):
         """ Test serialization of a Promotion """
-        promotion = Promotion(promo_name="random", goods_name="random_good", category="random_category", price=20, discount=20, available=False)        
+        promotion = Promotion(promo_name="random", goods_name="random_good", category="random_category", price=20, discount=20, available=False)
         data = promotion.serialize()
         self.assertNotEqual(data, None)
         self.assertIn('id', data)
@@ -162,7 +161,7 @@ class TestPromotions(unittest.TestCase):
         self.assertEqual(promotions[0].category, "random2_category")
         self.assertEqual(promotions[0].promo_name, "random2")
         self.assertEqual(promotions[0].goods_name, "random2_good")
-        self.assertEqual(promotions[0].price, 2)        
+        self.assertEqual(promotions[0].price, 2)
         self.assertEqual(promotions[0].discount, 2)
         self.assertEqual(promotions[0].available, False)
 
@@ -174,7 +173,7 @@ class TestPromotions(unittest.TestCase):
         self.assertEqual(promotions[0].category, "random2_category")
         self.assertEqual(promotions[0].promo_name, "random2")
         self.assertEqual(promotions[0].goods_name, "random2_good")
-        self.assertEqual(promotions[0].price, 2)     
+        self.assertEqual(promotions[0].price, 2)
         self.assertEqual(promotions[0].discount, 2)
         self.assertEqual(promotions[0].available, False)
 
