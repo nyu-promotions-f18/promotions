@@ -22,4 +22,9 @@ services:
   - mysql
 
 before_script:
-  - mysql -e 'create database test;'
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
+
+before_install:
+  - sudo mysql -e "use mysql; update user set authentication_string=PASSWORD('') where User='root'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
+  - sudo mysql_upgrade -u root -p
+  - sudo service mysql restart
