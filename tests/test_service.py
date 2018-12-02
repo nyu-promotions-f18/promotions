@@ -192,14 +192,14 @@ class TestPromotionServer(unittest.TestCase):
 
   def test_query_promotion_list_by_name(self):
     """ Test of querying promotions by name """
-    resp = self.app.get('/promotions', query_string='name=20%+off')
+    resp = self.app.get('/promotions', query_string='name=Buy20%+one20%+get20%+one20%+free')
     self.assertEqual(resp.status_code, status.HTTP_200_OK)
     self.assertGreater(len(resp.data), 0)
     self.assertIn('Carrot', resp.data)
-    self.assertNotIn('Apple', resp.data)
+    self.assertNotIn('iPhone XS', resp.data)
     data = json.loads(resp.data)
     query_item = data[0]
-    self.assertEqual(query_item['promo_name'], '20% off')
+    self.assertEqual(query_item['promo_name'], 'Buy one get one free')
 
   def test_query_promotion_list_by_availability(self):
     """ Test of querying promotions by availability """
@@ -224,7 +224,7 @@ class TestPromotionServer(unittest.TestCase):
     data = json.loads(resp.data)
     query_item = data[0]
     self.assertEqual(query_item['category'], 'Fruit')
-  
+
   def test_reset_promotion_data(self):
     """ Test of deleting all promotions """
     initial_count = len(self.get_promotion())
