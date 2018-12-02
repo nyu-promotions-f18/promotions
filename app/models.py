@@ -115,12 +115,6 @@ class Promotion(db.Model):
         db.session.execute("DELETE FROM promotion;")
 
     @staticmethod
-    def remove_all_via_truncate():
-        """ Delete all promotions in the database via TRUNCATE command"""
-        Promotion.logger.info('Deleting all promotions via truncate command')
-        db.session.execute("TRUNCATE TABLE promotion")
-
-    @staticmethod
     def find(promotion_id):
         """ Finds a Promotion good by it's ID """
         Promotion.logger.info('Processing lookup for id %s ...', promotion_id)

@@ -302,7 +302,7 @@ class UnavailableResource(Resource):
 @app.route('/promotions/reset', methods=['DELETE'])
 def promotions_reset():
     """ Removes all promotions from the database """
-    Promotion.remove_all_via_truncate()
+    Promotion.remove_all()
     return '', status.HTTP_204_NO_CONTENT
 
 

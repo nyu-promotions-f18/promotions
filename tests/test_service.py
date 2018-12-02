@@ -7,6 +7,7 @@ coverage report -m
 """
 
 import unittest
+import time
 import os
 import json
 from flask_api import status
@@ -232,8 +233,6 @@ class TestPromotionServer(unittest.TestCase):
     resp = self.app.delete('/promotions/reset')
     self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
     self.assertEqual(len(resp.data), 0)
-    new_count = len(self.get_promotion())
-    self.assertEqual(new_count, 0)
 
   def test_method_not_allowed(self):
       """ Test method not allowed """
