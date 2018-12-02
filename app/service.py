@@ -115,7 +115,7 @@ def internal_server_error(error):
     message = error.message or str(error)
     app.logger.info(message)
     return jsonify(status=500, error='Internal Server Error', message=message), status.HTTP_500_INTERNAL_SERVER_ERROR
-    
+
 
 ######################################################################
 # GET HEALTH
@@ -302,7 +302,7 @@ class UnavailableResource(Resource):
 @app.route('/promotions/reset', methods=['DELETE'])
 def promotions_reset():
     """ Removes all promotions from the database """
-    Promotion.remove_all()
+    Promotion.remove_all_via_truncate()
     return '', status.HTTP_204_NO_CONTENT
 
 
@@ -338,7 +338,7 @@ def initialize_logging(log_level=logging.INFO):
         # Make a new log handler that uses STDOUT
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(logging.Formatter(fmt))
-        handler.setLevel(log_level) 
+        handler.setLevel(log_level)
         # Remove the Flask default handlers and use our own
         handler_list = list(app.logger.handlers)
         for log_handler in handler_list:
