@@ -96,6 +96,7 @@ class TestPromotions(unittest.TestCase):
         promotion2.save()
         self.assertEqual(len(Promotion.all()), 2)
         Promotion.remove_all()
+	db.create_all()
         self.assertEqual(len(Promotion.all()), 0)
 
 
