@@ -15,6 +15,10 @@ Scenario: The server is running
     Then I should see "Promotion RESTful Service" in the title
     And I should not see "404 Not Found"
 
+#################################
+############# Read ##############
+#################################
+
 Scenario: Read a promotion
     When I visit the "Home Page"
     And I set the "Category" to "Kids"
@@ -131,7 +135,15 @@ Scenario: Delete a Promotion
     When I press the "Retrieve" button
     Then I should see the message "Promotion with id '1' was not found."
 
+#############################################
+############ Action: Delete All #############
+#############################################
 
 
+Scenario: Action-Delete all promotions in service
+    When I send a DELETE request to '/promotions/reset'
+    Then I should see the message " "
+    When I visit the "Home Page"
+    Then There should be "0" promotions
 
 

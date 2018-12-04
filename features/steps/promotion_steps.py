@@ -13,7 +13,7 @@ from selenium.webdriver.support.ui import Select
 # from selenium.webdriver.support import expected_conditions as EC
 
 
-# WAIT_SECONDS = 30
+WAIT_SECONDS = 30
 BASE_URL = getenv('BASE_URL', 'http://localhost:5000/')
 
 
@@ -38,7 +38,7 @@ def step_impl(context):
         expect(context.resp.status_code).to_equal(201)
 
 
-@when('I visit the "home page"')
+@when('I visit the "Home Page"')
 def step_impl(context):
     """ Make a call to the base URL """
     context.driver.get(context.base_url)
@@ -98,6 +98,14 @@ def step_impl(context, message):
     element = context.driver.find_element_by_id('flash_message')
     expect(element.text).to_contain(message)
 
+@then('There should be "{count}" promotions')
+def step_impl(context, count):
+    count = int(count)
+    data = json.loads(context.resp.data.decode('utf-8'))
+    if isinstance(data, list):
+        assert len(data) == count
+    else:
+        assert isinstance(data, dict)
 ##################################################################
 # This code works because of the following naming convention:
 # The id field for text input in the html is the element name
