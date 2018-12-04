@@ -112,7 +112,8 @@ class Promotion(db.Model):
     def remove_all():
         """ Delete all promotions in the database """
         Promotion.logger.info('Deleting all promotions')
-        db.session.execute("DELETE FROM promotion;")
+        db.drop_all()
+        #db.session.execute("DELETE FROM promotion;")
 
     @staticmethod
     def find(promotion_id):
