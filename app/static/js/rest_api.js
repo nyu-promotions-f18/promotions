@@ -191,7 +191,7 @@ $(function () {
         var queryString = ""
 
         if (name) {
-            queryString += 'name=' + name
+            queryString += 'promo_name=' + name
         }
         if (category) {
             if (queryString.length > 0) {
@@ -200,7 +200,7 @@ $(function () {
                 queryString += 'category=' + category
             }
         }
-        if (available != undefined) {
+        if ($("#promo_available").val() != undefined) {
             if (queryString.length > 0) {
                 queryString += '&availability=' + available
             } else {

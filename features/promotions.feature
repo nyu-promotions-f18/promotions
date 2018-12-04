@@ -140,10 +140,10 @@ Scenario: Delete a Promotion
 #############################################
 
 
-Scenario: Action-Delete all promotions in service
-    When I send a DELETE request to '/promotions/reset'
-    Then I should see the message " "
-    When I visit the "Home Page"
-    Then There should be "0" promotions
+# Scenario: Action-Delete all promotions in service
+#     When I send a DELETE request to '/promotions/reset'
+#     Then I should see the message " "
+#     When I visit the "Home Page"
+#     Then There should be "0" promotions
 
 
