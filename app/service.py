@@ -303,7 +303,6 @@ class UnavailableResource(Resource):
 def promotions_reset():
     """ Removes all promotions from the database """
     Promotion.remove_all()
-    Promotion.init_db()
     return '', status.HTTP_204_NO_CONTENT
 
 

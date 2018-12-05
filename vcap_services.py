@@ -31,7 +31,6 @@ def get_database_uri():
       2) With MySQL running on the local server as with Travis CI
       3) With MySQL --link in a Docker container called 'mariadb'
     """
-    print(os.environ)
     # Get the credentials from the Bluemix environment
     if 'VCAP_SERVICES' in os.environ:
         logging.info("Using VCAP_SERVICES...")
