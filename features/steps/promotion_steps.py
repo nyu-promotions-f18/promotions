@@ -106,14 +106,7 @@ def step_impl(context, message):
     )
     expect(found).to_be(True)
 
-@then('There should be "{count}" promotions')
-def step_impl(context, count):
-    count = int(count)
-    data = json.loads(context.resp.data.decode('utf-8'))
-    if isinstance(data, list):
-        assert len(data) == count
-    else:
-        assert isinstance(data, dict)
+
 ##################################################################
 # This code works because of the following naming convention:
 # The id field for text input in the html is the element name
