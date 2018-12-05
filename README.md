@@ -1,5 +1,6 @@
 ## NYU DevOps-Promotions Fall 2018
 [![codecov](https://codecov.io/gh/nyu-promotions-f18/promotions/branch/master/graph/badge.svg)](https://codecov.io/gh/nyu-promotions-f18/promotions)
+[![Build Status](https://travis-ci.com/nyu-promotions-f18/promotions.svg?branch=master)](https://travis-ci.com/nyu-promotions-f18/promotions)
 
 This repository consists of the source code for a RESTFUL promotions service using Python Flask.
 
