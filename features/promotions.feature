@@ -140,30 +140,10 @@ Scenario: Delete a Promotion
 #############################################
 
 
-Scenario: Delete all promotions in service
-      When I visit the "Home Page"
-      And I press the "Reset" button
-      Then I should see the message "All Promotions have been Deleted!"
-      When I visit the "Home Page"
-      And I press the "Search" button
-      Then I should see the message "Success"
-      And I should not see "BlackFriday" in the results
-      And I should not see "CyberMonday" in the results
-      And I should not see "Christmas" in the results
-
-########################################################
-############ Delete Unavailable Promotions #############
-########################################################
-
-
-Scenario: Delete all unavailable promotions in service
-      When I visit the "Home Page"
-      And I press the "DeleteUnavailable" button
-      Then I should see the message "Unavailabe promotions deleted"
-      When I visit the "Home Page"
-      And I press the "Search" button
-      Then I should see the message "Success"
-      And I should see "true" in the results
-      And I should not see "false" in the results
+# Scenario: Action-Delete all promotions in service
+#     When I send a DELETE request to '/promotions/reset'
+#     Then I should see the message " "
+#     When I visit the "Home Page"
+#     Then There should be "0" promotions
 
 
