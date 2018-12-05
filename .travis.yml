@@ -8,6 +8,9 @@ addons:
 # command to install dependencies
 install: "pip install -r requirements.txt"
 
+before_script:
+  - python manage.py development
+
 script:
   - nosetests
 
