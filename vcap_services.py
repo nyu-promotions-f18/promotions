@@ -39,6 +39,13 @@ def get_database_uri():
         creds = services['dashDB For Transactions'][0]['credentials']
         uri = creds["uri"]
         return uri
+    if 'TRAVIS_MARIADB_VERSION' in os.environ:
+        logging.info("Using Travis CI's database...")
+        username = 'root'
+        password = ''
+        hostname = 'localhost'
+        port = '3306'
+        name = 'development'
     else:
         logging.info("Using localhost database...")
         username = 'root'
