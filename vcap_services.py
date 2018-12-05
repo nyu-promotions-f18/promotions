@@ -31,6 +31,7 @@ def get_database_uri():
       2) With MySQL running on the local server as with Travis CI
       3) With MySQL --link in a Docker container called 'mariadb'
     """
+    print(os.environ)
     # Get the credentials from the Bluemix environment
     if 'VCAP_SERVICES' in os.environ:
         logging.info("Using VCAP_SERVICES...")
@@ -39,6 +40,13 @@ def get_database_uri():
         creds = services['dashDB For Transactions'][0]['credentials']
         uri = creds["uri"]
         return uri
+    if 'TRAVIS_MARIADB_VERSION' in os.environ:
+        logging.info("Using Travis CI's database...")
+        username = 'root'
+        password = ''
+        hostname = 'localhost'
+        port = '3306'
+        name = 'development'
     else:
         logging.info("Using localhost database...")
         username = 'root'
