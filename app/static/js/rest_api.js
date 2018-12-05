@@ -169,55 +169,6 @@ $(function () {
         });
     });
 
-
-    // ****************************************
-    // Delete all Promotions
-    // ****************************************
-
-    $("#reset-btn").click(function () {
-
-
-        var ajax = $.ajax({
-            type: "DELETE",
-            url: "/promotions/reset",
-            contentType:"application/json",
-            data: '',
-        })
-
-        ajax.done(function(res){
-            clear_form_data()
-            flash_message("All Promotions have been Deleted!")
-        });
-
-        ajax.fail(function(res){
-            flash_message("Server error!")
-        });
-    });
-
-    // ****************************************
-    // Delete all unvailable Promotions
-    // ****************************************
-
-    $("#deleteunavailable-btn").click(function () {
-
-
-        var ajax = $.ajax({
-            type: "DELETE",
-            url: "/promotions/unavailable",
-            contentType:"application/json",
-            data: '',
-        })
-
-        ajax.done(function(res){
-            clear_form_data()
-            flash_message("Unavailabe promotions deleted")
-        });
-
-        ajax.fail(function(res){
-            flash_message("Server error!")
-        });
-    });
-
     // ****************************************
     // Clear the form
     // ****************************************
