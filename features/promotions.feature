@@ -135,15 +135,19 @@ Scenario: Delete a Promotion
     When I press the "Retrieve" button
     Then I should see the message "Promotion with id '1' was not found."
 
-#############################################
-############ Action: Delete All #############
-#############################################
+############################################################
+############ Action: Delete All Unav available #############
+############################################################
 
 
-# Scenario: Action-Delete all promotions in service
-#     When I send a DELETE request to '/promotions/reset'
-#     Then I should see the message " "
-#     When I visit the "Home Page"
-#     Then There should be "0" promotions
-
-
+Scenario: Delete all unavailable promotions in service
+      When I visit the "Home Page"
+      And I press the "DeleteUnavailable" button
+      Then I should see the message "Unavailable Promotions have been Deleted!"
+      When I visit the "Home Page"
+      And I press the "Search" button
+      And I select the "available" to "True"
+      And I press the "Search" button
+      Then I should see the message "Success"
+      And I should see "true" in the results
+      And I should not see "false" in the results
