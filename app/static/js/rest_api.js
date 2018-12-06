@@ -170,6 +170,29 @@ $(function () {
     });
 
     // ****************************************
+    // Delete all Unavailable Promotion
+    // ****************************************
+
+    $("#deleteunavailable-btn").click(function () {
+
+
+        var ajax = $.ajax({
+            type: "DELETE",
+            url: "/promotions/unavailable",
+            contentType:"application/json",
+            data: '',
+        })
+
+        ajax.done(function(res){
+            clear_form_data()
+            flash_message("Unavailable Promotions have been Deleted!")
+        });
+
+        ajax.fail(function(res){
+            flash_message("Server error!")
+        });
+    });
+    // ****************************************
     // Clear the form
     // ****************************************
 
