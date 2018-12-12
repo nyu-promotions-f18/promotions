@@ -239,6 +239,11 @@ class TestPromotionServer(unittest.TestCase):
       resp = self.app.put('/promotions')
       self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
+  def test_not_found(self):
+    """ Test Not Found """
+    resp = self.app.get('/promotion')
+    self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
   def test_bad_request(self):
     """ Test Bad Request """
     new_promotion = {
