@@ -13,7 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-WAIT_SECONDS = 30
+WAIT_SECONDS = 120
 
 @given('the following promotions')
 def step_impl(context):
