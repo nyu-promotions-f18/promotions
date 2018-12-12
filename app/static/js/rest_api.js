@@ -46,7 +46,7 @@ $(function () {
         var orig_price = $("#promo_price").val();
         var discount = $("#promo_discount").val();
         var category = $("#promo_category").val();
-        var available = $("#promo_available").val() == "true";
+        var available = $("#promo_available").val() == "True";
 
         var data = {
             "promo_name": promo_name,
@@ -87,7 +87,7 @@ $(function () {
         var orig_price = $("#promo_price").val();
         var discount = $("#promo_discount").val();
         var category = $("#promo_category").val();
-        var available = $("#promo_available").val() == "true";
+        var available = $("#promo_available").val() == "True";
 
         var data = {
             "promo_name": promo_name,
