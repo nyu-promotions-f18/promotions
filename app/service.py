@@ -22,7 +22,7 @@ from werkzeug.exceptions import BadRequest, NotFound,\
                         UnsupportedMediaType, InternalServerError # Exception Class
 
 from . import app
-from models import Promotion, DataValidationError  #, DatabaseConnectionError
+from models import Promotion
 
 # Pull options from environment
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')

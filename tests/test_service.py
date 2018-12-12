@@ -13,7 +13,7 @@ import json
 from flask_api import status
 from flask import Flask
 from app import app, db
-from app.models import Promotion, DataValidationError
+from app.models import Promotion
 import app.service as service
 
 # DATABASE_URI = 'mysql+pymysql://root:passw0rd@localhost:3306/test'
