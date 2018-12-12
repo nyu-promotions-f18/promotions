@@ -105,7 +105,7 @@ class TestPromotionServer(unittest.TestCase):
 
   def test_get_promotion_not_found(self):
     """ Test of getting a nonexistent promotion """
-    resp = self.app.get('/promotions/0')
+    resp = self.app.get('/promotions/10')
     self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
   def test_create_promotion(self):
@@ -238,6 +238,11 @@ class TestPromotionServer(unittest.TestCase):
       """ Test method not allowed """
       resp = self.app.put('/promotions')
       self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+  #def test_unsupported_media_type(self):
+   #   """ Test method not allowed """
+    #  resp = self.app.put('/promotions')
+    #  self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
   def test_bad_request(self):
     """ Test Bad Request """

@@ -47,7 +47,7 @@ api = Api(app,
           # prefix='/api'
          )
 
-# This namespace is the start of the path i.e., /pets
+# This namespace is the start of the path i.e., /promotions
 ns = api.namespace('promotions', description='Promotion operations')
 
 # Define the model so that the docs reflect what can be sent
@@ -67,54 +67,6 @@ promotion_model = api.model('Promotion', {
     'available': fields.Boolean(required=True,
                                 description='Is the Promotion avaialble now?')
 })
-
-######################################################################
-# Error Handlers
-######################################################################
-@api.errorhandler(DataValidationError)
-def request_validation_error(error):
-    """ Handles Value Errors from bad data """
-    message = error.message or str(error)
-    app.logger.info(message)
-    return {'status':400, 'error': 'Bad Request', 'message': message}, 400
-    #return bad_request(error)
-
-
-#@api.errorhandler(DatabaseConnectionError)
-#def database_connection_error(error):
-#    """ Handles Database Errors from connection attempts """
-#    message = error.message or str(error)
-#    app.logger.critical(message)
-#    return {'status':500, 'error': 'Server Error', 'message': message}, 500
-
-# @app.errorhandler(404)
-# def not_found(error):
-#     """ Handles resources not found with 404_NOT_FOUND """
-#     message = error.message or str(error)
-#     app.logger.info(message)
-#     print("dfssdf")
-#     return jsonify(status=404, error='Not Found', message=message), status.HTTP_404_NOT_FOUND
-
-# @app.errorhandler(405)
-# def method_not_supported(error):
-#     """ Handles unsuppoted HTTP methods with 405_METHOD_NOT_SUPPORTED """
-#     message = error.message or str(error)
-#     app.logger.info(message)
-#     return jsonify(status=405, error='Method not Allowed', message=message), status.HTTP_405_METHOD_NOT_ALLOWED
-
-# @app.errorhandler(415)
-# def mediatype_not_supported(error):
-#     """ Handles unsuppoted media requests with 415_UNSUPPORTED_MEDIA_TYPE """
-#     message = error.message or str(error)
-#     app.logger.info(message)
-#     return jsonify(status=415, error='Unsupported media type', message=message), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
-
-@app.errorhandler(500)
-def internal_server_error(error):
-    """ Handles unexpected server error with 500_SERVER_ERROR """
-    message = error.message or str(error)
-    app.logger.info(message)
-    return jsonify(status=500, error='Internal Server Error', message=message), status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 ######################################################################
@@ -263,11 +215,15 @@ class PromotionCollection(Resource):
         check_content_type('application/json')
         promotion = Promotion()
         app.logger.info('Payload = %s', api.payload)
-        promotion.deserialize(api.payload)
-        promotion.save()
-        app.logger.info('Promotion with new id [%s] saved!', promotion.id)
-        location_url = api.url_for(PromotionResource, promotion_id=promotion.id, _external=True)
-        return promotion.serialize(), status.HTTP_201_CREATED, { 'Location': location_url }
+        result, success = promotion.deserialize(api.payload)
+        if success:
+            promotion.save()
+            app.logger.info('Promotion with new id [%s] saved!', promotion.id)
+            location_url = api.url_for(PromotionResource, promotion_id=promotion.id, _external=True)
+            return promotion.serialize(), status.HTTP_201_CREATED, { 'Location': location_url }
+        else:
+            raise BadRequest("Bad request data")
+            
 
 
 

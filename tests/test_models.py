@@ -137,7 +137,9 @@ class TestPromotions(unittest.TestCase):
         """ Test deserialization of bad data """
         data = "this is not a dictionary"
         promotion = Promotion()
-        self.assertRaises(DataValidationError, promotion.deserialize, data)
+        result, success = promotion.deserialize(data)
+        self.assertFalse(success)
+        #self.assertRaises(DataValidationError, promotion.deserialize, data)
 
     def test_find_promotion(self):
         """ Find a Promotion by ID """

@@ -20,15 +20,6 @@ import ibm_db
 from . import db
 
 ######################################################################
-# Custom Exceptions
-######################################################################
-class DataValidationError(ValueError):
-    pass
-
-#class DatabaseConnectionError(ConnectionError):
-#   pass
-
-######################################################################
 # Promotion Model for database
 ######################################################################
 class Promotion(db.Model):
@@ -82,6 +73,7 @@ class Promotion(db.Model):
         Args:
             data (dict): A dictionary containing the promotion data
         """
+        print("DESERIALIZE!!!!!!!!!!")
         try:
             self.promo_name = data['promo_name']
             self.goods_name = data['goods_name']
@@ -90,11 +82,10 @@ class Promotion(db.Model):
             self.discount = data['discount']
             self.available = data['available']
         except KeyError as error:
-            raise DataValidationError('Invalid promotion goods: missing ' + error.args[0])
+            return "Invalid promotion goods: missing ' + error.args[0]",False
         except TypeError as error:
-            raise DataValidationError('Invalid promotion goods: body of request contained' \
-                                      'bad or no data')
-        return self
+            return "Invalid promotion: body of request contained invalid data'", False
+        return self,True
 
     @staticmethod
     def init_db():
