@@ -109,12 +109,12 @@ def request_validation_error(error):
 #     app.logger.info(message)
 #     return jsonify(status=415, error='Unsupported media type', message=message), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
 
-@app.errorhandler(500)
-def internal_server_error(error):
-    """ Handles unexpected server error with 500_SERVER_ERROR """
-    message = error.message or str(error)
-    app.logger.info(message)
-    return jsonify(status=500, error='Internal Server Error', message=message), status.HTTP_500_INTERNAL_SERVER_ERROR
+#@app.errorhandler(500)
+#def internal_server_error(error):
+#    """ Handles unexpected server error with 500_SERVER_ERROR """
+#    message = error.message or str(error)
+#    app.logger.info(message)
+#    return jsonify(status=500, error='Internal Server Error', message=message), status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 ######################################################################
