@@ -77,37 +77,14 @@ def request_validation_error(error):
     message = error.message or str(error)
     app.logger.info(message)
     return {'status':400, 'error': 'Bad Request', 'message': message}, 400
-    #return bad_request(error)
 
-
-#@api.errorhandler(DatabaseConnectionError)
-#def database_connection_error(error):
-#    """ Handles Database Errors from connection attempts """
-#    message = error.message or str(error)
-#    app.logger.critical(message)
-#    return {'status':500, 'error': 'Server Error', 'message': message}, 500
-
-# @app.errorhandler(404)
-# def not_found(error):
-#     """ Handles resources not found with 404_NOT_FOUND """
-#     message = error.message or str(error)
-#     app.logger.info(message)
-#     print("dfssdf")
-#     return jsonify(status=404, error='Not Found', message=message), status.HTTP_404_NOT_FOUND
-
-# @app.errorhandler(405)
-# def method_not_supported(error):
-#     """ Handles unsuppoted HTTP methods with 405_METHOD_NOT_SUPPORTED """
-#     message = error.message or str(error)
-#     app.logger.info(message)
-#     return jsonify(status=405, error='Method not Allowed', message=message), status.HTTP_405_METHOD_NOT_ALLOWED
-
-# @app.errorhandler(415)
-# def mediatype_not_supported(error):
-#     """ Handles unsuppoted media requests with 415_UNSUPPORTED_MEDIA_TYPE """
-#     message = error.message or str(error)
-#     app.logger.info(message)
-#     return jsonify(status=415, error='Unsupported media type', message=message), status.HTTP_415_UNSUPPORTED_MEDIA_TYPE
+@app.errorhandler(404)
+def not_found(error):
+    """ Handles resources not found with 404_NOT_FOUND """
+    message = error.message or str(error)
+    app.logger.info(message)
+    print("dfssdf")
+    return jsonify(status=404, error='Not Found', message=message), status.HTTP_404_NOT_FOUND
 
 @app.errorhandler(500)
 def internal_server_error(error):
