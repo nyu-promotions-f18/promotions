@@ -45,24 +45,24 @@ class TestPromotionServer(unittest.TestCase):
       'promo_name': 'Buy one get one free',
       'goods_name': 'Apple',
       'category': 'Fruit',
-      'price': '2.99',
-      'discount': '0.5',
+      'price': 2.99,
+      'discount': 0.5,
       'available': False,
     }
     initial_data_2 = {
       'promo_name': '20% off',
       'goods_name': 'Carrot',
       'category': 'Vegetable',
-      'price': '3.99',
-      'discount': '0.8',
+      'price': 3.99,
+      'discount': 0.8,
       'available': False,
     }
     initial_data_3 = {
       'promo_name': '70% off',
       'goods_name': 'IPhone XS',
       'category': 'Digital Products',
-      'price': '1000.00',
-      'discount': '0.7',
+      'price': 1000.00,
+      'discount': 0.7,
       'available': True,
     }
     self.save_promotion(initial_data_1)
@@ -122,8 +122,8 @@ class TestPromotionServer(unittest.TestCase):
       'promo_name': '20% off',
       'goods_name': 'broccoli',
       'category': 'Vegetable',
-      'price': '3.45',
-      'discount': '0.8',
+      'price': 3.45,
+      'discount': 0.8,
       'available': False,
     }
     data = json.dumps(new_promotion)
@@ -144,8 +144,8 @@ class TestPromotionServer(unittest.TestCase):
       'promo_name': '20% off',
       'goods_name': 'broccoli',
       'category': 'Vegetable',
-      'price': '3.45',
-      'discount': '0.8',
+      'price': 3.45,
+      'discount': 0.8,
       'available': True,
     }
     resp = self.app.post('/promotions', data=new_promotion, content_type='application/x-www-form-urlencoded')
@@ -269,11 +269,25 @@ class TestPromotionServer(unittest.TestCase):
     resp = self.app.get('/promotion')
     self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
-  def test_bad_request(self):
-    """ Test Bad Request """
+  def test_create_with_missing_attribute(self):
+    """ Test create a promotion with incomplete attributes """
     new_promotion = {
       'promo_name': '20% off',
       'available': False,
+    }
+    data = json.dumps(new_promotion)
+    resp = self.app.post('/promotions', data=data, content_type='application/json')
+    self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+  def test_create_with_wrong_data_type(self):
+    """ Test create a promotion with wrong data type """
+    new_promotion = {
+      'promo_name': '20% off',
+      'goods_name': 'broccoli',
+      'category': 'Vegetable',
+      'price': 'cheap',
+      'discount': 0.8,
+      'available': True,
     }
     data = json.dumps(new_promotion)
     resp = self.app.post('/promotions', data=data, content_type='application/json')
