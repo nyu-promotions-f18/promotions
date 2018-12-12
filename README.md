@@ -109,4 +109,15 @@ If the VM is no longer needed you can remove it with from your computer to free 
     vagrant destroy
 ```
 
+
+## Running the application in IBM cloud 
+
+    The application has been successfully deployed on IBM cloud and it can be accessed through the link
+    https://nyu-devops-promotion-service-f18.mybluemix.net/ 
+    
+    The user can create,update, delete or retrieve the promotions using the UI.
+    
+    The unit testing and integartion testing happens automatically if there is any pull request. On passing the 
+    build, deploy, test and prod stage the application is always ready to run.
+    
 This repo is the student's code contribution as a part of the NYU masters class: **CSCI-GA.2820-001 DevOps and Agile Methodologies** by John Rofrano.
