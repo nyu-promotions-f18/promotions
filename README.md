@@ -113,7 +113,7 @@ If the VM is no longer needed you can remove it with from your computer to free 
 ## Running the application in IBM cloud 
 
     The application has been successfully deployed on IBM cloud and it can be accessed through the link
-    https://nyu-devops-promotion-service-f18.mybluemix.net/ 
+    [https://nyu-devops-promotion-service-f18.mybluemix.net/]
     
     The user can create,update, delete or retrieve the promotions using the UI.
     
