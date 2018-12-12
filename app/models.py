@@ -57,9 +57,12 @@ class Promotion(db.Model):
         Saves a Promotion to the data store
         """
         # if the id is None it hasn't been added to the database
-        if not self.id:
-            db.session.add(self)
-        db.session.commit()
+        try:
+            if not self.id:
+                db.session.add(self)
+            db.session.commit()
+        except:
+            raise DataValidationError('Invalid promotion goods: body of request contained bad or no data')
 
     def delete(self):
         """ Removes a Promotion from the data store """
@@ -92,8 +95,7 @@ class Promotion(db.Model):
         except KeyError as error:
             raise DataValidationError('Invalid promotion goods: missing ' + error.args[0])
         except TypeError as error:
-            raise DataValidationError('Invalid promotion goods: body of request contained' \
-                                      'bad or no data')
+            raise DataValidationError('Invalid promotion goods: body of request contained bad or no data')
         return self
 
     @staticmethod
