@@ -4,6 +4,7 @@ Promotion Model Test Suite
 Test cases can be run with the following:
 nosetests
 coverage report -m
+
 """
 
 import unittest
@@ -108,6 +109,12 @@ class TestPromotionServer(unittest.TestCase):
     resp = self.app.get('/promotions/0')
     self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
+  def test_get_promotion_wrong_id_type(self):
+     """ Get a Promotion with wrong id type """
+     resp = self.app.get('/promotions/a')
+     self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+
   def test_create_promotion(self):
     """ Test of creating a new promotion """
     promotion_count = len(self.get_promotion())
@@ -171,7 +178,6 @@ class TestPromotionServer(unittest.TestCase):
   def test_delete_promotion(self):
      """ Delete a Promotion """
      promotion = Promotion.find_by_promo_name('Buy one get one free')[0]
-     # save the current number of promotions for later comparison
      promotion_count = len(self.get_promotion())
      resp = self.app.delete('/promotions/{}'.format(promotion.id),
                                content_type='application/json')
@@ -179,6 +185,25 @@ class TestPromotionServer(unittest.TestCase):
      self.assertEqual(len(resp.data), 0)
      new_count = len(self.get_promotion())
      self.assertEqual(new_count, promotion_count - 1)
+
+
+  def test_delete_promotion_wrong_id_type(self):
+      """ Delete a Promotion with wrong id type """
+      old_count = len(self.get_promotion())
+      resp = self.app.delete('/promotions/{}'.format("a"),
+                               content_type='application/json')
+      self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+      new_count = len(self.get_promotion())
+      self.assertEqual(new_count, old_count)
+
+  def test_delete_promotion_not_found(self):
+        """ Delete a Promotion that does not exist """
+        old_count = len(self.get_promotion())
+        resp = self.app.delete('/promotions/{}'.format(0),
+                               content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        new_count = len(self.get_promotion())
+        self.assertEqual(new_count, old_count)
 
   def test_delete_unavailable_promotion(self):
     """ Delete all unavailable promotions """
